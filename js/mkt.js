@@ -728,9 +728,9 @@ class mkt {
     gerarParametros = () => {
         return mkt.QAll(this.c.filtro)
             .map((i) => {
-            if (i.value != "")
-                return "&" + i.name + "=" + encodeURIComponent(i.value);
-        })
+                if (i.value != "")
+                    return "&" + i.name + "=" + encodeURIComponent(i.value);
+            })
             .join("");
     };
     setFiltroListener = () => {
@@ -886,9 +886,11 @@ class mkt {
     };
     headAtivar = () => {
         let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-        let opcoes = this.getModel().map(o => { if (o.f == false) {
-            return o.k;
-        } }).filter(r => { return r != null; });
+        let opcoes = this.getModel().map(o => {
+            if (o.f == false) {
+                return o.k;
+            }
+        }).filter(r => { return r != null; });
         if (eTrHeadPai) {
             Array.from(eTrHeadPai.children).forEach((th) => {
                 let possui = false;
@@ -1210,41 +1212,41 @@ class mkt {
         timers: [],
         util: {
             cpf: ["000.000.000-00", "^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$", (cpf) => {
-                    let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
-                    let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
-                    if (!cpf) {
-                        return false;
-                    }
-                    cpf = mkt.apenasNumeros(cpf);
-                    if (cpf.length != 11) {
-                        return false;
-                    }
-                    let temp = cpf.slice(0, 9);
-                    let c = 0;
-                    for (let i = 0; i < 9; i++) {
-                        c += Number(temp.charAt(i)) * m1[i];
-                    }
-                    let r = c % 11;
-                    (r < 2) ? r = 0 : r = 11 - r;
-                    temp += r.toString();
-                    c = 0;
-                    for (let i = 0; i < 10; i++) {
-                        c += Number(temp.charAt(i)) * m2[i];
-                    }
-                    r = c % 11;
-                    (r < 2) ? r = 0 : r = 11 - r;
-                    return cpf.charAt(10) == r.toString();
-                }],
+                let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
+                let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+                if (!cpf) {
+                    return false;
+                }
+                cpf = mkt.apenasNumeros(cpf);
+                if (cpf.length != 11) {
+                    return false;
+                }
+                let temp = cpf.slice(0, 9);
+                let c = 0;
+                for (let i = 0; i < 9; i++) {
+                    c += Number(temp.charAt(i)) * m1[i];
+                }
+                let r = c % 11;
+                (r < 2) ? r = 0 : r = 11 - r;
+                temp += r.toString();
+                c = 0;
+                for (let i = 0; i < 10; i++) {
+                    c += Number(temp.charAt(i)) * m2[i];
+                }
+                r = c % 11;
+                (r < 2) ? r = 0 : r = 11 - r;
+                return cpf.charAt(10) == r.toString();
+            }],
             cep: ["00.000-000", "^([0-9]{2}[\.]?[0-9]{3}[-]?[0-9]{3})$", (cep) => {
-                    if (!cep) {
-                        return false;
-                    }
-                    cep = mkt.apenasNumeros(cep);
-                    if (cep.length != 8) {
-                        return false;
-                    }
-                    return true;
-                }],
+                if (!cep) {
+                    return false;
+                }
+                cep = mkt.apenasNumeros(cep);
+                if (cep.length != 8) {
+                    return false;
+                }
+                return true;
+            }],
             cnpj: [
                 "00.000.000/0000-00",
                 "^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$", (cnpj) => {
@@ -1289,33 +1291,33 @@ class mkt {
                 }
             ],
             cnh: ["00000000000", "^([0-9]{11})$", (cnh) => {
-                    if (!cnh) {
-                        return false;
-                    }
-                    cnh = mkt.apenasNumeros(cnh);
-                    if (cnh.length != 11) {
-                        return false;
-                    }
-                    return true;
-                }],
+                if (!cnh) {
+                    return false;
+                }
+                cnh = mkt.apenasNumeros(cnh);
+                if (cnh.length != 11) {
+                    return false;
+                }
+                return true;
+            }],
             rg: ["00.000.000-0", "^[0-9]{2}([\.]?[0-9]{3}){2}[-]?[0-9]$", (rg) => {
-                    rg = rg.replace(/[^0-9]/g, '');
-                    if (rg.length !== 9)
-                        return false;
-                    let soma = 0;
-                    const pesos = [2, 3, 4, 5, 6, 7, 8, 9, 100];
-                    for (let i = 0; i < 8; i++) {
-                        soma += parseInt(rg[i]) * pesos[i];
-                    }
-                    let resto = soma % 11;
-                    let dig = resto === 0 ? 0 : 11 - resto;
-                    if (dig === 10)
-                        dig = 0;
-                    if (parseInt(rg[8]) !== dig) {
-                        return false;
-                    }
-                    return true;
-                }],
+                rg = rg.replace(/[^0-9]/g, '');
+                if (rg.length !== 9)
+                    return false;
+                let soma = 0;
+                const pesos = [2, 3, 4, 5, 6, 7, 8, 9, 100];
+                for (let i = 0; i < 8; i++) {
+                    soma += parseInt(rg[i]) * pesos[i];
+                }
+                let resto = soma % 11;
+                let dig = resto === 0 ? 0 : 11 - resto;
+                if (dig === 10)
+                    dig = 0;
+                if (parseInt(rg[8]) !== dig) {
+                    return false;
+                }
+                return true;
+            }],
             placa: ["AAA-0S00", "^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$"],
             placaAntesMercosul: ["AAA-0000", "^([A-Za-z]{3}[-]?[0-9]{4})$"],
             placaMercosul: [
@@ -1867,8 +1869,10 @@ class mkt {
         },
         Previous: (colName, iof) => {
             if ((mkt.classof(iof) == "String") && (mkt.classof(colName) == "String")) {
-                let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
-                    return o.k; }).filter((r) => { return r != null; });
+                let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => {
+                    if (o.f)
+                        return o.k;
+                }).filter((r) => { return r != null; });
                 let posAtual = opcoes.indexOf(colName);
                 let posAnterior = 0;
                 if (posAtual >= 0) {
@@ -1886,8 +1890,10 @@ class mkt {
         },
         Next: (colName, iof) => {
             if (mkt.classof(iof) == "String") {
-                let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
-                    return o.k; }).filter((r) => { return r != null; });
+                let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => {
+                    if (o.f)
+                        return o.k;
+                }).filter((r) => { return r != null; });
                 let posAtual = opcoes.indexOf(colName);
                 let posSeguinte = 0;
                 if (posAtual >= 0) {
@@ -4465,6 +4471,12 @@ class mkt {
             }
         });
     };
+    static to64 = (texto = "") => {
+        return btoa(encodeURIComponent(texto));
+    };
+    static from64 = (texto = "") => {
+        return decodeURIComponent(atob(texto));
+    };
 }
 Object.keys(mkt).forEach((n) => {
     if (!mkt.a.definePropertyExceptions.includes(n)) {
@@ -5247,12 +5259,16 @@ li[m="1"] {
     get getFirstSelecionado() { return [...this.selecionadosMap]?.[0] || null; }
     get selecionadosMap() { return this.config.selecionados; }
     get values() { return [...this.selecionadosMap.values()]; }
-    get valuesOk() { return this.values.map(i => { if (i) {
-        return mkt.removeEspecias(i).toLowerCase();
+    get valuesOk() {
+        return this.values.map(i => {
+            if (i) {
+                return mkt.removeEspecias(i).toLowerCase();
+            }
+            else {
+                return "";
+            }
+        });
     }
-    else {
-        return "";
-    } }); }
     get keys() { return [...this.selecionadosMap.keys()]; }
     get opcoes() { return this.config._data; }
     set opcoes(text) {
@@ -5274,11 +5290,15 @@ li[m="1"] {
     }
     get event() { return this.config.geraInputEvent(); }
     get url() { return this.config.url; }
-    set url(text) { if (text != null)
-        this.config.url = text; }
+    set url(text) {
+        if (text != null)
+            this.config.url = text;
+    }
     get size() { return this.getAttribute("size"); }
-    set size(value) { if (value)
-        this.setAttribute("size", value); }
+    set size(value) {
+        if (value)
+            this.setAttribute("size", value);
+    }
     get disabled() { return this.hasAttribute("disabled"); }
     set disabled(value) {
         if (value)
@@ -5305,9 +5325,11 @@ li[m="1"] {
         }
     }
     get name() { return this.getAttribute("name"); }
-    set name(text) { if (text) {
-        this.setAttribute("name", text);
-    } }
+    set name(text) {
+        if (text) {
+            this.setAttribute("name", text);
+        }
+    }
     get [Symbol.toStringTag]() { return "mkSelElement"; }
     static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos", "class"];
 }
@@ -5443,9 +5465,11 @@ class mkBot extends HTMLElement {
         ;
     }
     get name() { return this.getAttribute("name"); }
-    set name(text) { if (text) {
-        this.setAttribute("name", text);
-    } }
+    set name(text) {
+        if (text) {
+            this.setAttribute("name", text);
+        }
+    }
     get disabled() { return this.hasAttribute("disabled"); }
     set disabled(value) {
         if (value)
