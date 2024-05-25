@@ -10,7 +10,7 @@ let arq = null;
 let listas = [];
 let keys = [
 	{ k: "mCod", l: "COD", requer: true, f: false },
-	{ k: "mTit", l: "Título", requer: true },
+	{ k: "mTit", l: "Título", classes: "w-100", requer: true },
 	{ k: "mTit2", l: "SubTítulo", requer: true, f: false },
 	{ k: "mDat", l: "Data", atr: `type="date"`, v: mkt.dataGetData(), requer: true },
 	{ k: "mDes", l: "Descrição", tag: "textarea", requer: true },
@@ -120,24 +120,27 @@ const aoExportar = () => {
 	a.click();
 };
 
-const aoReceberConteudo = (conteudo) => {
+const configListagem = (conteudo) => {
 	let mkt_cfg = new mktc(keys);
-	mkt_cfg.dados = conteudo;
+	mkt_cfg.dados = [];
+	if (conteudo) mkt_cfg.dados = conteudo;
 	mkt_cfg.url = null;
 	mkt_cfg.sortBy = "mTit";
 	mkt_cfg.sortDir = "mTit";
-	listas[0] = new mkt(mkt_cfg);
+	mkt_cfg.aoConcluirExibicao = () => {
+		mkt.Q(".totais").innerHTML = `${listas[0].dadosFull.length} Registros.`
+	};
+	return mkt_cfg;
+}
+
+const aoReceberConteudo = (conteudo) => {
+	listas[0] = new mkt(configListagem(conteudo));
 	mkt.QverOff(".body");
 	mkt.QverOn(".listas");
 };
 
 const aoClicarCriar = () => {
-	let mkt_cfg = new mktc(keys);
-	mkt_cfg.dados = [];
-	mkt_cfg.url = null;
-	mkt_cfg.sortBy = "mTit";
-	mkt_cfg.sortDir = "mTit";
-	listas[0] = new mkt(mkt_cfg);
+	listas[0] = new mkt(configListagem());
 	mkt.QverOff(".body");
 	mkt.QverOn(".listas");
 };
