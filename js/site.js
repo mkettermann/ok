@@ -1,7 +1,3 @@
-let l = (...s) => {
-	console.log("=>", ...s);
-};
-
 let icoArquivo =
 	"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16' class='icoArquivo'><path d='M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z'/></svg>";
 let = pathIcoAdd =
@@ -12,14 +8,13 @@ let = pathIcoEdit =
 let arq = null;
 
 let listas = [];
-let keys = [];
-// KVLR
-// K (Chave)	- V (Valor) - L (Label) - R (REGEX)	- T (TAG Html) - A (Attributos Tag) - I (Value no Inner)
-keys.push({ k: "mCod", v: "", l: "Id", r: "", t: "input", a: "type='text'", i: false });
-keys.push({ k: "mTit", v: "", l: "Título", r: "", t: "input", a: "type='text'", i: false });
-keys.push({ k: "mTit2", v: "", l: "SubTítulo", r: "", t: "input", a: "type='text'", i: false });
-keys.push({ k: "mDat", v: "", l: "Data", r: mkt.a.util.data[1], t: "input", a: "type='text'", i: false });
-keys.push({ k: "mDes", v: "", l: "Descrição", r: "", t: "textarea", a: "cols='50' rows='10'", i: true });
+let keys = [
+	{ k: "mCod", l: "COD", requer: true, f: false },
+	{ k: "mTit", l: "Título", requer: true },
+	{ k: "mTit2", l: "SubTítulo", requer: true, f: false },
+	{ k: "mDat", l: "Data", requer: true },
+	{ k: "mDes", l: "Descrição", tag: "textarea", requer: true },
+];
 
 // FUNCOES
 const fr = (i) => {
@@ -116,8 +111,7 @@ const fo = (i) => {
 };
 
 const aoExportar = () => {
-	let codificado = fi(mkt.encod(JSON.stringify(listas[0].dadosFull)));
-	l(codificado.length);
+	let codificado = fi(mkt.to64(JSON.stringify(listas[0].dadosFull)));
 	var a = document.createElement("a");
 	var blobData = new Blob([codificado]);
 	a.href = URL.createObjectURL(blobData);
@@ -126,25 +120,19 @@ const aoExportar = () => {
 };
 
 const aoReceberConteudo = (conteudo) => {
-	listas[0] = new mkt(
-		conteudo,
-		".divListagemContainer",
-		"#modelo",
-		".iConsultas",
-		{
-			keys: keys,
-		}
-	);
+	let mkt_cfg = new mktc(keys);
+	mkt_cfg.dados = conteudo;
+	mkt_cfg.url = null;
+	listas[0] = new mkt(mkt_cfg);
 	mkt.QverOff(".body");
 	mkt.QverOn(".listas");
 };
 
 const aoClicarCriar = () => {
-	listas.push(
-		new mkt([], ".divListagemContainer", "#modelo", ".iConsultas", {
-			keys: keys,
-		})
-	);
+	let mkt_cfg = new mktc(keys);
+	mkt_cfg.dados = [];
+	mkt_cfg.url = null;
+	listas[0] = new mkt(mkt_cfg);
 	mkt.QverOff(".body");
 	mkt.QverOn(".listas");
 };
@@ -171,7 +159,6 @@ const aoImportarDescodificado = async () => {
 
 const aoAlterarInputImport = async (ev) => {
 	let arqs = ev.target.files;
-	l(arqs);
 	if (arqs.length > 0) {
 		let conteudo = await lerTexto(arqs[0]);
 		splitado = conteudo.split("█");
@@ -191,12 +178,11 @@ const aoAlterarInputImport = async (ev) => {
 
 const aoAlterarInput = async (ev) => {
 	let arqs = ev.target.files;
-	l(arqs);
 	if (arqs.length > 0) {
-		let alvo = mkt.getEClass(mkt.Q(ev.target), "descarregavel").children[0];
+		let alvo = mkt.Q(ev.target).closest(".descarregavel").children[0];
 		alvo.innerHTML = icoArquivo + arqs[0].name;
 		let conteudo = await lerTexto(arqs[0]);
-		let d = JSON.parse(mkt.decod(fo(conteudo)));
+		let d = JSON.parse(mkt.from64(fo(conteudo)));
 		aoReceberConteudo(d);
 	}
 };
@@ -205,10 +191,10 @@ const aoDescarregar = async (ev) => {
 	ev.preventDefault();
 	let arqs = ev.dataTransfer.files; // the files that were dropped
 	if (arqs.length > 0) {
-		let alvo = mkt.getEClass(mkt.Q(ev.target), "descarregavel").children[0];
+		let alvo = mkt.Q(ev.target).closest(".descarregavel").children[0];
 		alvo.innerHTML = icoArquivo + arqs[0].name;
 		let conteudo = await lerTexto(arqs[0]);
-		let d = JSON.parse(mkt.decod(fo(conteudo)));
+		let d = JSON.parse(mkt.from64(fo(conteudo)));
 		aoReceberConteudo(d);
 	}
 	mkt.QAll(".carga").forEach((e) => {
@@ -245,8 +231,8 @@ const uiGetADD = async (listId) => {
 		"onclick",
 		"uiSetADD(" + listId + ")"
 	);
-	l(listas[listId].getModel());
-	await mkt.mkMoldeOA(
+	mkt.l(listas[listId].getModel());
+	await mkt.moldeOA(
 		listas[listId].getModel(),
 		"#modeloOperacao",
 		".operacaoCampos"
@@ -271,7 +257,7 @@ const uiGetEDIT = async (tr, listId) => {
 	);
 	let objeto = listas[listId].dadosFull.find((o) => o[k] == v);
 	// l("Editando: [k:" + k + ",v:" + v + "]", objeto);
-	await mkt.mkMoldeOA(
+	await mkt.moldeOA(
 		listas[listId].getKVLR(objeto),
 		"#modeloOperacao",
 		".operacaoCampos"
