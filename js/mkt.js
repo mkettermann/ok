@@ -1041,8 +1041,37 @@ class mkt {
         }
         return temp;
     };
-    getModel = () => {
-        return this.c.model;
+    getModel = (valorKey) => {
+        if (valorKey) {
+            let obj = this.getObj(valorKey);
+            if (obj != null) {
+                let model = mkt.clonar(this.c.model);
+                model.forEach((i) => {
+                    i.v = obj[i.k];
+                    let temp = document.createElement("template");
+                    temp.innerHTML = i.field;
+                    let field = temp.content.cloneNode(true).querySelector("*");
+                    if (i.tag == "textarea") {
+                        field.innerHTML = obj[i.k] ? obj[i.k] : "";
+                    }
+                    else if (i.tag == "img") {
+                        field.setAttribute("src", obj[i.k] ? obj[i.k] : "");
+                    }
+                    else {
+                        field.setAttribute("value", obj[i.k] ? obj[i.k] : "");
+                    }
+                    i.field = field?.outerHTML;
+                });
+                return model;
+            }
+            else {
+                mkt.w("getModel() - Objeto solicitado inexistente: ", valorKey);
+                return null;
+            }
+        }
+        else {
+            return this.c.model;
+        }
     };
     getUsedKeys = (formatoKV = false) => {
         let kv = [];
