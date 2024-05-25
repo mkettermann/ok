@@ -18,7 +18,7 @@ let keys = [];
 keys.push({ k: "mCod", v: "", l: "Id", r: "", t: "input", a: "type='text'", i: false });
 keys.push({ k: "mTit", v: "", l: "Título", r: "", t: "input", a: "type='text'", i: false });
 keys.push({ k: "mTit2", v: "", l: "SubTítulo", r: "", t: "input", a: "type='text'", i: false });
-keys.push({ k: "mDat", v: "", l: "Data", r: mk.util.data[1], t: "input", a: "type='text'", i: false });
+keys.push({ k: "mDat", v: "", l: "Data", r: mkt.a.util.data[1], t: "input", a: "type='text'", i: false });
 keys.push({ k: "mDes", v: "", l: "Descrição", r: "", t: "textarea", a: "cols='50' rows='10'", i: true });
 
 // FUNCOES
@@ -116,17 +116,17 @@ const fo = (i) => {
 };
 
 const aoExportar = () => {
-	let codificado = fi(mk.encod(JSON.stringify(listas[0].dadosFull)));
+	let codificado = fi(mkt.encod(JSON.stringify(listas[0].dadosFull)));
 	l(codificado.length);
 	var a = document.createElement("a");
 	var blobData = new Blob([codificado]);
 	a.href = URL.createObjectURL(blobData);
-	a.download = "cc" + mk.getFullData() + ".zip";
+	a.download = "cc" + mkt.getFullData() + ".zip";
 	a.click();
 };
 
 const aoReceberConteudo = (conteudo) => {
-	listas[0] = new mk(
+	listas[0] = new mkt(
 		conteudo,
 		".divListagemContainer",
 		"#modelo",
@@ -135,24 +135,24 @@ const aoReceberConteudo = (conteudo) => {
 			keys: keys,
 		}
 	);
-	mk.QverOff(".body");
-	mk.QverOn(".listas");
+	mkt.QverOff(".body");
+	mkt.QverOn(".listas");
 };
 
 const aoClicarCriar = () => {
 	listas.push(
-		new mk([], ".divListagemContainer", "#modelo", ".iConsultas", {
+		new mkt([], ".divListagemContainer", "#modelo", ".iConsultas", {
 			keys: keys,
 		})
 	);
-	mk.QverOff(".body");
-	mk.QverOn(".listas");
+	mkt.QverOff(".body");
+	mkt.QverOn(".listas");
 };
 
 const aoSair = () => {
 	listas = [];
-	mk.QverOn(".body");
-	mk.QverOff(".listas");
+	mkt.QverOn(".body");
+	mkt.QverOff(".listas");
 };
 
 const lerTexto = async (arq) => {
@@ -166,8 +166,7 @@ const lerTexto = async (arq) => {
 };
 
 const aoImportarDescodificado = async () => {
-	l("Importar");
-	mkt = mk.Q("input[name='importar']").click();
+	l("Importar OFF");
 };
 
 const aoAlterarInputImport = async (ev) => {
@@ -194,10 +193,10 @@ const aoAlterarInput = async (ev) => {
 	let arqs = ev.target.files;
 	l(arqs);
 	if (arqs.length > 0) {
-		let alvo = mk.getEClass(mk.Q(ev.target), "descarregavel").children[0];
+		let alvo = mkt.getEClass(mkt.Q(ev.target), "descarregavel").children[0];
 		alvo.innerHTML = icoArquivo + arqs[0].name;
 		let conteudo = await lerTexto(arqs[0]);
-		let d = JSON.parse(mk.decod(fo(conteudo)));
+		let d = JSON.parse(mkt.decod(fo(conteudo)));
 		aoReceberConteudo(d);
 	}
 };
@@ -206,16 +205,16 @@ const aoDescarregar = async (ev) => {
 	ev.preventDefault();
 	let arqs = ev.dataTransfer.files; // the files that were dropped
 	if (arqs.length > 0) {
-		let alvo = mk.getEClass(mk.Q(ev.target), "descarregavel").children[0];
+		let alvo = mkt.getEClass(mkt.Q(ev.target), "descarregavel").children[0];
 		alvo.innerHTML = icoArquivo + arqs[0].name;
 		let conteudo = await lerTexto(arqs[0]);
-		let d = JSON.parse(mk.decod(fo(conteudo)));
+		let d = JSON.parse(mkt.decod(fo(conteudo)));
 		aoReceberConteudo(d);
 	}
-	mk.QAll(".carga").forEach((e) => {
+	mkt.QAll(".carga").forEach((e) => {
 		e.classList.remove("carga");
 	});
-	mk.QAll("input[type='file']").forEach((e) => {
+	mkt.QAll("input[type='file']").forEach((e) => {
 		e.value = "";
 	});
 };
@@ -223,7 +222,7 @@ const aoDescarregar = async (ev) => {
 const aoPassarCarga = (ev) => {
 	ev.preventDefault();
 	let eSobre = ev.toElement;
-	mk.QAll(".carga").forEach((e) => {
+	mkt.QAll(".carga").forEach((e) => {
 		e.classList.remove("carga");
 	});
 	if (eSobre.classList.contains("descarregavel")) {
@@ -232,47 +231,47 @@ const aoPassarCarga = (ev) => {
 };
 
 const aoClicarNivel2Cancelar = () => {
-	mk.QverOn(".listas");
-	mk.QverOff(".operacaoContainer");
+	mkt.QverOn(".listas");
+	mkt.QverOff(".operacaoContainer");
 };
 
 const uiGetADD = async (listId) => {
-	mk.QverOff(".listas");
-	mk.QverOn(".operacaoContainer");
-	mk.Q(".operacaoTitulo").innerHTML = "Adicionar";
-	mk.Q(".operacaoAcao").innerHTML = "Adicionar";
-	mk.Q(".operacaoAcaoIco").innerHTML = pathIcoAdd;
-	mk.Q(".operacaoBotao").setAttribute(
+	mkt.QverOff(".listas");
+	mkt.QverOn(".operacaoContainer");
+	mkt.Q(".operacaoTitulo").innerHTML = "Adicionar";
+	mkt.Q(".operacaoAcao").innerHTML = "Adicionar";
+	mkt.Q(".operacaoAcaoIco").innerHTML = pathIcoAdd;
+	mkt.Q(".operacaoBotao").setAttribute(
 		"onclick",
 		"uiSetADD(" + listId + ")"
 	);
 	l(listas[listId].getModel());
-	await mk.mkMoldeOA(
+	await mkt.mkMoldeOA(
 		listas[listId].getModel(),
 		"#modeloOperacao",
 		".operacaoCampos"
 	);
-	mk.QSet(
+	mkt.QSet(
 		".operacaoCampos input[name='" + listas[listId].c.pk + "']",
 		listas[listId].getNewPK()
 	);
 };
 
 const uiGetEDIT = async (tr, listId) => {
-	mk.QverOff(".listas");
-	mk.QverOn(".operacaoContainer");
+	mkt.QverOff(".listas");
+	mkt.QverOn(".operacaoContainer");
 	let k = listas[listId].c.pk;
 	let v = tr.getAttribute("id");
-	mk.Q(".operacaoTitulo").innerHTML = "Editar";
-	mk.Q(".operacaoAcao").innerHTML = "Editar";
-	mk.Q(".operacaoAcaoIco").innerHTML = pathIcoEdit;
-	mk.Q(".operacaoBotao").setAttribute(
+	mkt.Q(".operacaoTitulo").innerHTML = "Editar";
+	mkt.Q(".operacaoAcao").innerHTML = "Editar";
+	mkt.Q(".operacaoAcaoIco").innerHTML = pathIcoEdit;
+	mkt.Q(".operacaoBotao").setAttribute(
 		"onclick",
 		"uiSetEDIT('" + k + "','" + v + "', " + listId + ")"
 	);
 	let objeto = listas[listId].dadosFull.find((o) => o[k] == v);
 	// l("Editando: [k:" + k + ",v:" + v + "]", objeto);
-	await mk.mkMoldeOA(
+	await mkt.mkMoldeOA(
 		listas[listId].getKVLR(objeto),
 		"#modeloOperacao",
 		".operacaoCampos"
@@ -282,35 +281,35 @@ const uiGetEDIT = async (tr, listId) => {
 const uiGetDEL = async (tr, listId) => {
 	let k = listas[listId].c.pk;
 	let v = tr.getAttribute("id");
-	mk.mkConfirma("Você realmente quer deletar esta linha?").then((r) => {
+	mkt.mkConfirma("Você realmente quer deletar esta linha?").then((r) => {
 		if (r) uiSetDEL(k, v, listId);
 	});
 };
 
 // ACOES
 const uiSetADD = async (listId) => {
-	let obj = mk.mkGerarObjeto(".operacaoCampos");
+	let obj = mkt.mkGerarObjeto(".operacaoCampos");
 	// Método de ADICIONAR da biblioteca:
 	listas[listId].add(obj);
-	mk.QverOff(".operacaoContainer");
-	mk.QverOn(".listas");
+	mkt.QverOff(".operacaoContainer");
+	mkt.QverOn(".listas");
 };
 const uiSetEDIT = async (k, v, listId) => {
-	let obj = mk.mkGerarObjeto(".operacaoCampos");
+	let obj = mkt.mkGerarObjeto(".operacaoCampos");
 	// Método de EDITAR da biblioteca:
 	listas[listId].edit(obj, k, v);
-	mk.QverOff(".operacaoContainer");
-	mk.QverOn(".listas");
+	mkt.QverOff(".operacaoContainer");
+	mkt.QverOn(".listas");
 };
 const uiSetDEL = async (k, v, listId) => {
 	// Método de DELETAR da biblioteca:
 	listas[listId].del(k, v);
-	mk.QverOff(".operacaoContainer");
-	mk.QverOn(".listas");
+	mkt.QverOff(".operacaoContainer");
+	mkt.QverOn(".listas");
 };
 const uiClearFiltro = async (listId) => {
 	// Método de LIMPAR FILTRO da biblioteca:
 	listas[listId].clearFiltro();
-	mk.QverOff(".operacaoContainer");
-	mk.QverOn(".listas");
+	mkt.QverOff(".operacaoContainer");
+	mkt.QverOn(".listas");
 };
