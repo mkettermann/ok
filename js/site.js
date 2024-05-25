@@ -116,7 +116,7 @@ const aoExportar = () => {
 	var a = document.createElement("a");
 	var blobData = new Blob([codificado]);
 	a.href = URL.createObjectURL(blobData);
-	a.download = "cc" + mkt.getFullData() + ".zip";
+	a.download = "cc" + mkt.dataGetData() + ".zip";
 	a.click();
 };
 
