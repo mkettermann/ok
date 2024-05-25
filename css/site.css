@@ -1,0 +1,272 @@
+:root {
+	--borderMaster: #4400c3;
+	--borderLeve: #c5b5ff;
+	--titulo: #4400c3;
+	--tituloContra: #fff;
+	--tituloContraOposto: #000;
+	--link: #5b00e3;
+	--fundoLink: #c5b5ff;
+	--fundoPar: #f3eeff;
+	--fundo: #eeffff;
+	--bgEnviando: #8b6bff;
+	--fundoHead: var(--titulo);
+	--corHead: var(--tituloContra);
+	--bordaMaster: var(--borderMaster);
+	--corLink: var(--link);
+	--tClaroTextoHigh: var(--titulo) !important;
+}
+
+/* SETS*/
+html {
+	font-size: 12pt;
+}
+
+::-webkit-scrollbar {
+	width: 5px;
+	height: 5px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 15px;
+	border: 5px double var(--borderMaster);
+}
+
+input {
+	border: 1px solid transparent;
+	outline: 0px;
+	border-radius: 3px;
+	padding: 4px;
+	background-color: var(--borderLeve);
+}
+
+/* ESTRUTURA*/
+
+body,
+.body {
+	display: flex;
+	flex-direction: column;
+	border-radius: 15px;
+	border: 3px outset var(--borderMaster);
+}
+
+body {
+	height: calc(100vh - 10px);
+	margin: 5px;
+}
+
+.body,
+.listas {
+	height: 100%;
+	max-height: calc(100vh - 20px);
+	margin: 2px;
+}
+
+header {
+	display: flex;
+	justify-content: center;
+	flex: 0 0 30%;
+}
+
+h1 {
+	font-family: "Comic Sans MS";
+	font-size: 4rem;
+	color: var(--titulo);
+	text-shadow: 1px 1px 1px black;
+	margin: auto;
+}
+
+section {
+	flex: 1 1 0%;
+	margin: 5px;
+	background-color: var(--fundoLink);
+	border-radius: 15px;
+}
+
+section form {
+	height: 100%;
+	text-align: center;
+}
+
+section button {
+	width: 100%;
+	height: 100%;
+	color: var(--link);
+	background-color: transparent;
+	border-radius: 15px;
+	border: 2px outset transparent;
+}
+
+/*UPLOAD*/
+.descarregavel {
+	outline: 1px dashed var(--borderMaster);
+	outline-offset: -5px;
+	transition: 0.2s ease-in-out;
+	padding: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.descarregavel label {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.descarregavel label:has(svg) {
+	flex-direction: row;
+}
+
+.descarregavel svg {
+	margin-right: 5px;
+}
+
+.descarregavel span {
+	font-weight: bold;
+}
+
+.carga {
+	outline-offset: 0px;
+	background-color: var(--bgEnviando);
+}
+
+/* TABELA */
+.divListagemContainer {
+	border: 1px solid var(--borderMaster);
+	border-radius: 10px;
+	height: calc(100% - 143px);
+}
+
+.divListagemContainer .divListagem {
+	position: relative;
+	overflow: auto;
+	border-radius: 10px;
+	height: 100%;
+	border: 1px solid var(--borderLeve);
+	max-height: calc(100% - 6px);
+}
+
+.divListagem {
+	width: 100%;
+}
+
+.divListagemContainer thead {
+	position: sticky;
+	top: 0px;
+}
+
+.divListagemContainer th {
+	background-color: var(--titulo);
+	border: 1px solid var(--borderLeve);
+	color: var(--tituloContra);
+	height: 40px;
+	text-shadow: 1px 1px 1px var(--tituloContraOposto);
+}
+
+.divListagemContainer tr {
+	background-color: var(--fundo);
+}
+
+.divListagemContainer tr:nth-child(2n) {
+	background-color: var(--fundoPar);
+}
+
+.divListagemContainer td {
+	border: 1px solid var(--borderLeve);
+	height: 40px;
+	padding: 2px;
+}
+
+.ColCell {
+	padding: 0px 5px;
+	overflow: auto;
+	text-align: center;
+	width: var(--w);
+	min-width: var(--w);
+	max-width: var(--w);
+}
+
+.ColCell input {
+	width: 100%;
+}
+
+.divListagem td:nth-child(1) {
+	text-align: left;
+	--w: auto;
+}
+
+.divListagem td:nth-child(2) {
+	--w: 150px;
+}
+
+.divListagem td:nth-child(3) {
+	--w: 80px;
+}
+
+.divListagem td:nth-child(4) {
+	--w: 60px;
+}
+
+.divListagem td:nth-child(5) {
+	--w: 60px;
+}
+
+.btnCrud button {
+	padding: 4px 0px;
+	width: 90%;
+}
+
+.btnCrud button svg {
+	width: 20px;
+	height: 20px;
+}
+
+/* BOTOES */
+.botoes {
+	padding: 5px;
+}
+
+.botoes button {
+	width: 100%;
+	font-weight: bold;
+}
+
+.botoes button svg {
+	width: 20px;
+	height: 20px;
+	fill: black;
+}
+
+.botoes button span {
+	margin-left: 5px;
+}
+
+.operacaoCampos {
+	margin: 20px auto;
+	display: flex;
+	flex-direction: column;
+	row-gap: 15px;
+}
+
+.iNovo {
+	min-width: 200px;
+}
+
+/* mkConfirmador */
+.mkConfirmadorBloco .mkConfirmadorTitulo svg {
+	fill: var(--fundoLink);
+}
+
+.botoes .j {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
