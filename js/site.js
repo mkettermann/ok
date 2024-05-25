@@ -154,10 +154,6 @@ const lerTexto = async (arq) => {
 	});
 };
 
-const aoImportarDescodificado = async () => {
-	l("Importar OFF");
-};
-
 const aoAlterarInputImport = async (ev) => {
 	let arqs = ev.target.files;
 	if (arqs.length > 0) {
