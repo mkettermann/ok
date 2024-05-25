@@ -15,6 +15,7 @@ let keys = [
 	{ k: "mDat", l: "Data", requer: true },
 	{ k: "mDes", l: "Descrição", tag: "textarea", requer: true },
 ];
+keys = keys.map(i => new mktm(i).toObject())
 
 // FUNCOES
 const fr = (i) => {
@@ -231,37 +232,24 @@ const uiGetADD = async (listId) => {
 		"onclick",
 		"uiSetADD(" + listId + ")"
 	);
-	mkt.l(listas[listId].getModel());
-	await mkt.moldeOA(
-		listas[listId].getModel(),
-		"#modeloOperacao",
-		".operacaoCampos"
-	);
-	mkt.QSet(
-		".operacaoCampos input[name='" + listas[listId].c.pk + "']",
-		listas[listId].getNewPK()
-	);
+	await mkt.moldeOA(listas[listId].getModel(), "#modeloOperacao", ".operacaoCampos", true, false);
+	mkt.QAll(".operacaoCampos .iConsultas").forEach(e => { e.classList.remove("iConsultas"); e.classList.add("iNovo") })
+	mkt.Q(".operacaoCampos .iNovo[name='" + listas[listId].c.pk + "']").value = listas[listId].getNewPK();
 };
 
-const uiGetEDIT = async (tr, listId) => {
+const uiGetEDIT = async (este, listId) => {
+	let cod = este.closest("tr").id;
 	mkt.QverOff(".listas");
 	mkt.QverOn(".operacaoContainer");
-	let k = listas[listId].c.pk;
-	let v = tr.getAttribute("id");
 	mkt.Q(".operacaoTitulo").innerHTML = "Editar";
 	mkt.Q(".operacaoAcao").innerHTML = "Editar";
 	mkt.Q(".operacaoAcaoIco").innerHTML = pathIcoEdit;
 	mkt.Q(".operacaoBotao").setAttribute(
 		"onclick",
-		"uiSetEDIT('" + k + "','" + v + "', " + listId + ")"
+		"uiSetEDIT('" + listas[listId].c.pk + "','" + cod + "', " + listId + ")"
 	);
-	let objeto = listas[listId].dadosFull.find((o) => o[k] == v);
-	// l("Editando: [k:" + k + ",v:" + v + "]", objeto);
-	await mkt.moldeOA(
-		listas[listId].getKVLR(objeto),
-		"#modeloOperacao",
-		".operacaoCampos"
-	);
+	await mkt.moldeOA(listas[listId].getModel(cod), "#modeloOperacao", ".operacaoCampos");
+	mkt.QAll(".operacaoCampos .iConsultas").forEach(e => { e.classList.remove("iConsultas"); e.classList.add("iEdit") })
 };
 
 const uiGetDEL = async (tr, listId) => {
@@ -274,14 +262,14 @@ const uiGetDEL = async (tr, listId) => {
 
 // ACOES
 const uiSetADD = async (listId) => {
-	let obj = mkt.mkGerarObjeto(".operacaoCampos");
+	let obj = mkt.geraObjForm(".operacaoCampos");
 	// Método de ADICIONAR da biblioteca:
 	listas[listId].add(obj);
 	mkt.QverOff(".operacaoContainer");
 	mkt.QverOn(".listas");
 };
 const uiSetEDIT = async (k, v, listId) => {
-	let obj = mkt.mkGerarObjeto(".operacaoCampos");
+	let obj = mkt.geraObjForm(".operacaoCampos");
 	// Método de EDITAR da biblioteca:
 	listas[listId].edit(obj, k, v);
 	mkt.QverOff(".operacaoContainer");
