@@ -1,5 +1,7 @@
-const swCache1 = 'ok-v1';
-const swCache2 = 'ok-v1';
+const swCacheBase = 'ok-v1'; // Estático
+const swCacheNovo = 'ok-v1'; // Dinamico
+
+// Assets do cache Base:
 const swAssets = [
 	'/',
 	'/html/offline.html',
@@ -39,7 +41,7 @@ const sw_cacheLimitSize = (name, size) => {
 // Ao instalar uma nova versão
 self.addEventListener('install', ev => {
 	//console.log('service worker installed');
-	ev.waitUntil(caches.open(swCache1).then(sw_cacheUpdate));
+	ev.waitUntil(caches.open(swCacheBase).then(sw_cacheUpdate));
 });
 
 // Ao ativar nova versão
@@ -48,7 +50,7 @@ self.addEventListener("activate", ev => {
 	ev.waitUntil(
 		caches.keys().then(versoesCache => {
 			return Promise.all(versoesCache
-				.filter(k => k !== swCache1 && k !== swCache2)
+				.filter(k => k !== swCacheBase && k !== swCacheNovo)
 				.map(k => caches.delete(k))
 			);
 		})
