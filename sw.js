@@ -1,4 +1,4 @@
-const swCache = 'site-static';
+const swCache = 'ok-v1';
 const swAssets = [
 	'/',
 	'/index.html',
@@ -32,6 +32,14 @@ self.addEventListener('install', ev => {
 // Ao ativar nova versão
 self.addEventListener("activate", ev => {
 	// console.log("SW Ativado: ", ev);
+	ev.waitUntil(
+		caches.keys().then(versoesCache => {
+			return Promise.all(versoesCache
+				.filter(k => k !== swCache)
+				.map(k => caches.delete(k))
+			);
+		})
+	);
 })
 
 // Proxy
