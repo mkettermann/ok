@@ -1,5 +1,5 @@
-const swCacheBase = 'ok-v1'; // Estático
-const swCacheNovo = 'ok-v1'; // Dinamico
+const swCacheBase = 'okb-v2'; // Estático
+const swCacheNovo = 'okn-v2'; // Dinamico
 
 // Assets do cache Base:
 const swAssets = [
@@ -11,8 +11,8 @@ const swAssets = [
 	'/js/popperv2.js',
 	'/js/site.js',
 	'/css/reset.css',
+	'/css/bootstrap-icons/font/bootstrap-icons.css',
 	'/css/bootstrap.min.css',
-	'/css/bootstrap.min.css.map',
 	'/css/mk.css',
 	'/css/site.css',
 	'/img/icons/ok_512.png',
@@ -63,9 +63,9 @@ self.addEventListener("fetch", ev => {
 	ev.respondWith(
 		caches.match(ev.request).then(cacheRes => {
 			return cacheRes || fetch(ev.request).then(fetchRes => {
-				return caches.open(dynamicCacheName).then(cache => {
+				return caches.open(swCacheNovo).then(cache => {
 					cache.put(ev.request.url, fetchRes.clone());
-					sw_cacheLimitSize(dynamicCacheName, 15);
+					sw_cacheLimitSize(swCacheNovo, 50);
 					return fetchRes;
 				})
 			});
