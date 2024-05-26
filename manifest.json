@@ -40,6 +40,12 @@
 			"sizes": "192x192"
 		},
 		{
+			"src": "/img/icons/ok_mask_196.png",
+			"sizes": "196x196",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
 			"src": "/img/icons/ok_384.png",
 			"type": "image/png",
 			"sizes": "384x384"
