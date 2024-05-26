@@ -1,6 +1,8 @@
-const swCache = 'ok-v1';
+const swCache1 = 'ok-v1';
+const swCache2 = 'ok-v1';
 const swAssets = [
 	'/',
+	'/html/offline.html',
 	'/index.html',
 	'/js/app.js',
 	'/js/mkt.js',
@@ -23,10 +25,21 @@ const sw_cacheUpdate = (cache) => {
 	return Promise.all(stack);
 };
 
+// cache size limit function
+const sw_cacheLimitSize = (name, size) => {
+	caches.open(name).then(cache => {
+		cache.keys().then(keys => {
+			if (keys.length > size) {
+				cache.delete(keys[0]).then(sw_cacheLimitSize(name, size));
+			}
+		});
+	});
+};
+
 // Ao instalar uma nova versão
 self.addEventListener('install', ev => {
 	//console.log('service worker installed');
-	ev.waitUntil(caches.open(swCache).then(sw_cacheUpdate));
+	ev.waitUntil(caches.open(swCache1).then(sw_cacheUpdate));
 });
 
 // Ao ativar nova versão
@@ -35,7 +48,7 @@ self.addEventListener("activate", ev => {
 	ev.waitUntil(
 		caches.keys().then(versoesCache => {
 			return Promise.all(versoesCache
-				.filter(k => k !== swCache)
+				.filter(k => k !== swCache1 && k !== swCache2)
 				.map(k => caches.delete(k))
 			);
 		})
@@ -47,7 +60,17 @@ self.addEventListener("fetch", ev => {
 	// console.log("Request: ", ev.request);
 	ev.respondWith(
 		caches.match(ev.request).then(cacheRes => {
-			return cacheRes || fetch(ev.request);
+			return cacheRes || fetch(ev.request).then(fetchRes => {
+				return caches.open(dynamicCacheName).then(cache => {
+					cache.put(ev.request.url, fetchRes.clone());
+					sw_cacheLimitSize(dynamicCacheName, 15);
+					return fetchRes;
+				})
+			});
+		}).catch(() => {
+			if (ev.request.url.indexOf('.html') > -1) {
+				return caches.match(swAssets[1]);
+			}
 		})
 	);
 })
