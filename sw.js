@@ -1,29 +1,40 @@
-const swCacheBase = 'okb-v2'; // Estático
-const swCacheNovo = 'okn-v2'; // Dinamico
+const swCacheBase = 'okb-v3'; // Estático
+const swCacheNovo = 'okn-v3'; // Dinamico
 
 // Assets do cache Base:
 const swAssets = [
 	'./',
-	'./html/offline.html',
 	'./index.html',
 	'./app.js',
+	'./css/bootstrap-icons/font/bootstrap-icons.css',
+	'./css/bootstrap-icons/font/bootstrap-icons.min.css',
+	'./css/bootstrap-icons/font/fonts/bootstrap-icons.woff',
+	'./css/bootstrap-icons/font/fonts/bootstrap-icons.woff2',
+	'./css/bootstrap.min.css',
+	'./css/divListagem.css',
+	'./css/mk.css',
+	'./css/reset.css',
+	'./css/site.css',
+	'./html/offline.html',
+	'./img/icons/ok_72.png',
+	'./img/icons/ok_96.png',
+	'./img/icons/ok_128.png',
+	'./img/icons/ok_144.png',
+	'./img/icons/ok_152.png',
+	'./img/icons/ok_192.png',
+	'./img/icons/ok_384.png',
+	'./img/icons/ok_512.png',
+	'./img/icons/ok_mask_196.png',
 	'./js/mkt.js',
 	'./js/popperv2.js',
 	'./js/site.js',
-	'./css/reset.css',
-	'./css/divListagem.css',
-	'./css/bootstrap-icons/font/bootstrap-icons.css',
-	'./css/bootstrap.min.css',
-	'./css/mk.css',
-	'./css/site.css',
-	'./img/icons/ok_512.png',
 ];
 
 const sw_cacheUpdate = (cache) => {
 	console.log('UPDATING CACHE');
 	const stack = [];
 	swAssets.forEach((rota) => stack.push(
-		cache.add(rota).catch(_ => console.error(`SW Falhou no cache do item: ${rota}`))
+		cache.add(rota).catch(_ => console.log(`%cSW:%c FALHA ao fazer CACHE nesta rota > ${rota}`, "color:green;", "background-color:black;color:red;"))
 	));
 	return Promise.all(stack);
 };
@@ -41,13 +52,13 @@ const sw_cacheLimitSize = (name, size) => {
 
 // Ao instalar uma nova versão
 self.addEventListener('install', ev => {
-	//console.log('service worker installed');
+	console.log(`%cSW:%c INSTALL`, "color:green;", "color:yellow;");
 	ev.waitUntil(caches.open(swCacheBase).then(sw_cacheUpdate));
 });
 
 // Ao ativar nova versão
 self.addEventListener("activate", ev => {
-	// console.log("SW Ativado: ", ev);
+	console.log(`%cSW:%c ACTIVATE`, "color:green;", "color:lightblue;");
 	ev.waitUntil(
 		caches.keys().then(versoesCache => {
 			return Promise.all(versoesCache
