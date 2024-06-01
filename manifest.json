@@ -3,55 +3,55 @@
 	"short_name": "UltraOK",
 	"description": "Um simples codificador de dados.",
 	"lang": "pt-BR",
-	"start_url": "/index.html",
+	"start_url": "./index.html",
 	"display": "standalone",
 	"background_color": "#4400C3",
 	"theme_color": "#5B00E3",
 	"orientation": "portrait-primary",
 	"icons": [
 		{
-			"src": "/img/icons/ok_72.png",
+			"src": "./img/icons/ok_72.png",
 			"type": "image/png",
 			"sizes": "72x72"
 		},
 		{
-			"src": "/img/icons/ok_96.png",
+			"src": "./img/icons/ok_96.png",
 			"type": "image/png",
 			"sizes": "96x96"
 		},
 		{
-			"src": "/img/icons/ok_128.png",
+			"src": "./img/icons/ok_128.png",
 			"type": "image/png",
 			"sizes": "128x128"
 		},
 		{
-			"src": "/img/icons/ok_144.png",
+			"src": "./img/icons/ok_144.png",
 			"type": "image/png",
 			"sizes": "144x144"
 		},
 		{
-			"src": "/img/icons/ok_152.png",
+			"src": "./img/icons/ok_152.png",
 			"type": "image/png",
 			"sizes": "152x152"
 		},
 		{
-			"src": "/img/icons/ok_192.png",
+			"src": "./img/icons/ok_192.png",
 			"type": "image/png",
 			"sizes": "192x192"
 		},
 		{
-			"src": "/img/icons/ok_mask_196.png",
+			"src": "./img/icons/ok_mask_196.png",
 			"sizes": "196x196",
 			"type": "image/png",
 			"purpose": "maskable"
 		},
 		{
-			"src": "/img/icons/ok_384.png",
+			"src": "./img/icons/ok_384.png",
 			"type": "image/png",
 			"sizes": "384x384"
 		},
 		{
-			"src": "/img/icons/ok_512.png",
+			"src": "./img/icons/ok_512.png",
 			"type": "image/png",
 			"sizes": "512x512"
 		}
