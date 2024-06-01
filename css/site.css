@@ -28,6 +28,7 @@
 html {
 	font-size: 12pt;
 	height: 100%;
+	overflow: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -57,6 +58,7 @@ body,
 .body {
 	display: flex;
 	flex-direction: column;
+	overflow: auto;
 }
 
 body {
@@ -144,6 +146,10 @@ section button {
 .carga {
 	outline-offset: 0px;
 	background-color: var(--bgEnviando);
+}
+
+.btnNovoInicial {
+	min-height: 100px;
 }
 
 /* TABELA */
