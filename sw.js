@@ -3,19 +3,20 @@ const swCacheNovo = 'okn-v2'; // Dinamico
 
 // Assets do cache Base:
 const swAssets = [
-	'/',
-	'/html/offline.html',
-	'/index.html',
-	'/js/app.js',
-	'/js/mkt.js',
-	'/js/popperv2.js',
-	'/js/site.js',
-	'/css/reset.css',
-	'/css/bootstrap-icons/font/bootstrap-icons.css',
-	'/css/bootstrap.min.css',
-	'/css/mk.css',
-	'/css/site.css',
-	'/img/icons/ok_512.png',
+	'./',
+	'./html/offline.html',
+	'./index.html',
+	'./js/app.js',
+	'./js/mkt.js',
+	'./js/popperv2.js',
+	'./js/site.js',
+	'./css/reset.css',
+	'./css/divListagem.css',
+	'./css/bootstrap-icons/font/bootstrap-icons.css',
+	'./css/bootstrap.min.css',
+	'./css/mk.css',
+	'./css/site.css',
+	'./img/icons/ok_512.png',
 ];
 
 const sw_cacheUpdate = (cache) => {
