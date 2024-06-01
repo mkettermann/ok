@@ -12,6 +12,6 @@ Representa um sistema simples de criptografia que consome outras ferramentas ava
  Principais Colaboradores</h2>
 
 <table><tbody><tr>
-  <td align="center" width="150"><a href="https://github.com/mkettermann"><br><sub>Marcos Kettermann (criador)</sub></a></td>
+  <td align="center" width="150"><a href="https://github.com/mkettermann"><img src="https://avatars.githubusercontent.com/u/109902736?s=70&v=4"><br><sub>Marcos Kettermann (criador)</sub></a></td>
 </tr></tbody></table>
 <br>
