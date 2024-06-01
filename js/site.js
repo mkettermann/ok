@@ -350,7 +350,7 @@ window.addEventListener("load", () => {
 		}
 	});
 	try {
-		userObserver.observe({ entryTypes: ["paint"] });
+		paintObserver.observe({ entryTypes: ["paint"] });
 	} catch (e) {
 		console.log("Paint Timing API not available");
 	}
