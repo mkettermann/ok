@@ -198,27 +198,6 @@ section button {
 	width: 100%;
 }
 
-.divListagem td:nth-child(1) {
-	text-align: left;
-	--w: auto;
-}
-
-.divListagem td:nth-child(2) {
-	--w: 150px;
-}
-
-.divListagem td:nth-child(3) {
-	--w: 80px;
-}
-
-.divListagem td:nth-child(4) {
-	--w: 60px;
-}
-
-.divListagem td:nth-child(5) {
-	--w: 60px;
-}
-
 .btnCrud button {
 	padding: 4px 0px;
 	width: 90%;
