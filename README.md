@@ -1,6 +1,7 @@
 <h2 style="background:white;"><img src="https://user-images.githubusercontent.com/109902736/216818770-483b5505-341b-4fc4-9877-bd2f5552e6df.png" width="30" style="background-color: green;border-radius: 5px;padding: 2px;">
 MK OK</h2>
-> Representa um sistema simples de criptografia que consome outras ferramentas avançadas de listagem, cache, sincronia, etc... para retornar ao usuário uma possibilidade de um sistema PWA e SPA que não nescecite que o usuário esteja online para fazer suas atividades.
+
+> - Representa um sistema simples de criptografia que consome outras ferramentas avançadas de listagem, cache, sincronia, etc... para retornar ao usuário uma possibilidade de um sistema PWA e SPA que não nescecite que o usuário esteja online para fazer suas atividades.
 > - Utilizando HTML, CSS e JAVASCRIPT avançado e progressivo. ...
 > - Tem aprovação e todos requisitos cumpridos do Lighthouse do Google para sistema PWA.
 
