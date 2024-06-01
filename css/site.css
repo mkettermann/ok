@@ -73,6 +73,7 @@ body {
 .body,
 .listas {
 	margin: 4px;
+	height: 100%;
 }
 
 header {
