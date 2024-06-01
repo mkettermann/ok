@@ -1599,6 +1599,8 @@ thead td:hover .mkhmHeadIco {
 
 .mkHeadMenu .hmin .htit {
 	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
 	margin: auto;
 	text-align: center;
 	background-color: #ccc;
@@ -1657,6 +1659,8 @@ thead td:hover .mkhmHeadIco {
 }
 
 .mkHeadMenu li .possibilidades {
+	max-height: 200px;
+	height: 200px;
 	max-height: 200px;
 	overflow: auto;
 }
