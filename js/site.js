@@ -363,15 +363,6 @@ window.addEventListener("load", () => {
 		taskObserver.observe({ entryTypes: ["longtask"] });
 	} catch (e) { }
 
-	// Frame Timing API
-	const frameObserver = new PerformanceObserver(list => {
-		list.getEntries().forEach(entry => site_see_performance("Frame drop", "Problem",
-			entry.duration));
-	});
-	try {
-		frameObserver.observe({ entryTypes: ["frame"] });
-	} catch (e) { }
-
 	// Server Timing
 	const serverTiming = performance.getEntriesByType("navigation")[0].serverTiming;
 	serverTiming.forEach(timing => {
