@@ -14,11 +14,20 @@
 	--bordaMaster: var(--borderMaster);
 	--corLink: var(--link);
 	--tClaroTextoHigh: var(--titulo) !important;
+
+}
+
+/* INTEGRACAO DE BIBLIOTECAS */
+.btn {
+	--bs-btn-border-radius: 5px !important;
+	--bs-btn-bg: var(--borderMaster);
+	--bs-btn-color: var(--fundo)
 }
 
 /* SETS*/
 html {
 	font-size: 12pt;
+	height: 100%;
 }
 
 ::-webkit-scrollbar {
@@ -44,25 +53,24 @@ input {
 }
 
 /* ESTRUTURA*/
-
 body,
 .body {
 	display: flex;
 	flex-direction: column;
-	border-radius: 15px;
-	border: 3px outset var(--borderMaster);
 }
 
 body {
-	height: calc(100vh - 10px);
-	margin: 5px;
+	border-radius: 8px;
+	outline: 3px double var(--borderMaster);
+	outline-offset: -3px;
+	padding: 4px;
+	height: calc(100% - 4px);
+	margin: 2px 4px 4px 2px;
 }
 
 .body,
 .listas {
-	height: 100%;
-	max-height: calc(100vh - 20px);
-	margin: 2px;
+	margin: 4px;
 }
 
 header {
@@ -81,7 +89,7 @@ h1 {
 
 section {
 	flex: 1 1 0%;
-	margin: 5px;
+	margin: 15px 5px;
 	background-color: var(--fundoLink);
 	border-radius: 15px;
 }
@@ -142,7 +150,9 @@ section button {
 .divListagemContainer {
 	border: 1px solid var(--borderMaster);
 	border-radius: 10px;
-	height: calc(100% - 143px);
+	height: calc(100%);
+	max-height: 400px;
+	margin: 10px 0px;
 }
 
 .divListagemContainer .divListagem {
