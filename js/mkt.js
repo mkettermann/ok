@@ -258,7 +258,7 @@ class mkt {
                 this.c.pk = modelo;
             }
             else {
-                mkt.w("Nenhuma Primary Key encontrada no Config ou no Template)");
+                mkt.l(`%c Nenhuma Primary Key encontrada no Config ou no Template (${this.c.idmodelo}) %c Config:`, "color:red;background-color:black;border-radius:5px;padding:0px 2px;font-weight:bold;", "color:white;", this.c);
             }
         }
         if (mkt.Q(this.c.container)) {
@@ -501,12 +501,21 @@ class mkt {
     dadosCheck = () => {
         mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r) => {
             if (r.v.length > 0) {
-                mkt.l("ALERTA!", this.c.nomeTabela, "possui CHAVES PRIMARIAS DUPLICADAS:", r.v);
+                let chaves = r.v.filter((i) => i != null);
+                if (chaves.length == 0) {
+                    mkt.l(`%c ALERTA! %c ${this.c.nomeTabela}: Chaves primárias NULAS! Nome da PK: %c${this.c.pk}`, "color:red;background-color:black;border-radius:5px;padding:1px;font-weight:bold;", "color:yellow;", "color:white;");
+                }
+                else {
+                    mkt.l(`%c ALERTA! %c ${this.c.nomeTabela}: Chaves primárias duplicadas:`, "color:red;background-color:black;border-radius:5px;padding:1px;font-weight:bold;", "color:yellow;", chaves);
+                }
             }
         });
         mkt.addTask({ k: "Duplices", v: this.dadosFull, target: this.c.pk }).then((r) => {
             if (r.v.length > 0) {
-                mkt.l("ALERTA!", this.c.nomeTabela, "possui CONTEÚDO REPETIDO:", r.v);
+                let chaves = r.v.filter((i) => i != null);
+                if (chaves.length != 0) {
+                    mkt.l(`%c ATENÇÃO! %c ${this.c.nomeTabela}: Conteúdo repetido:`, "color:orange;background-color:black;border-radius:5px;padding:0px 2px;font-weight:bold;", "color:yellow;", chaves);
+                }
             }
         });
     };
@@ -537,9 +546,6 @@ class mkt {
         });
     };
     atualizarListagem = async () => {
-        if (this.c.filtroDinamico) {
-            this._RecoletarFiltros();
-        }
         let pagBotoes = mkt.Q(this.c.pagBotoes);
         this.dadosFiltrado = mkt.processoFiltragem(this.dadosFull, this.c.objFiltro, this);
         this.atualizarStatusListagem();
@@ -776,14 +782,12 @@ class mkt {
             ehm.className = "mkHeadMenu oculto";
             ehm.innerHTML = `
 			<div class='hmin fimsecao'>
-				<div class='i htit'>
-					<div class='col10 microPos5 botao hmPrevious'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
-					<div class='col70 hmTitulo'>
-						Filtro
-					</div>
-					<div class='col10 microPos5 botao hmNext'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
-					<div class='col10 fechar botao nosel hmHide'>
-					${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}
+				<div class='i htit nosel'>
+					<div class='microPos5 botao hmPrevious'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
+					<div class='hmTitulo'>Filtro</div>
+					<div>
+						<div class='microPos5 botao hmNext'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
+						<div class='fechar botao hmHide'>${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}</div>
 					</div>
 				</div>
 				<ul>
@@ -952,14 +956,16 @@ class mkt {
                 th.classList.remove("mkEfeitoSobe");
             });
         }
-        let thsSort = mkt.QAll(this.c.ths + ".sort-" + this.c.sortBy);
+        let thsSort = mkt.QAll(this.c.ths);
         if (thsSort.length != 0) {
             thsSort.forEach((thSort) => {
-                if (this.c.sortDir == 1) {
-                    thSort.classList.add("mkEfeitoDesce");
-                }
-                else {
-                    thSort.classList.add("mkEfeitoSobe");
+                if (thSort.classList.contains(`sort-${this.c.sortBy}`)) {
+                    if (this.c.sortDir == 1) {
+                        thSort.classList.add("mkEfeitoDesce");
+                    }
+                    else {
+                        thSort.classList.add("mkEfeitoSobe");
+                    }
                 }
             });
         }
@@ -1577,14 +1583,29 @@ class mkt {
             });
         }
     };
-    static cte = (s, quietMode = false) => {
+    static cte = (s, config = null, ...rest) => {
         let t = mkt.a.timers.find((t) => t.name == s);
         if (t.fim == 0) {
             t.fim = mkt.dataGetMs();
             t.tempo = t.fim - t.ini;
         }
-        if (!quietMode) {
-            mkt.l(s + " \t-> " + t.tempo + " ms");
+        if (config) {
+            if (!config.quiet) {
+                let corTempo = "#0F0";
+                if (t.tempo > 80) {
+                    corTempo = "#9F0;";
+                }
+                if (t.tempo > 200) {
+                    corTempo = "#FF0;";
+                }
+                if (t.tempo > 500) {
+                    corTempo = "#F90;";
+                }
+                if (t.tempo > 2000) {
+                    corTempo = "#F00;";
+                }
+                mkt.l("%c" + t.tempo.toString().padStart(5) + `%c ms -> ${config._url.pathname}`, `color:${corTempo};`, "color:#777;", ``, ...rest);
+            }
         }
     };
     static errosLog = () => {
@@ -1974,9 +1995,10 @@ class mkt {
                 operador: "",
                 conteudo: v,
             };
+            let getCampoUI = mkt.Q(`${mkt.getThis(Number(iof)).c.filtro}[name="${colName}"]`);
+            if (getCampoUI)
+                getCampoUI.value = v;
             mkt.getThis(Number(iof)).atualizaNaPaginaUm();
-            mkt.getThis(Number(iof)).hmunsel = [];
-            mkt.hm.FiltraExclusivo("", iof);
         },
         FiltraExclusivo: (v, iof) => {
             if (mkt.classof(iof) == "String") {
@@ -2295,6 +2317,23 @@ class mkt {
         }
         if (!config.quiet)
             config.quiet = false;
+        if (!config.colorConteudo)
+            config.colorConteudo = "#ACF";
+        if (!config.colorRequest)
+            config.colorRequest = "#777";
+        if (!config.colorType)
+            config.colorType = "#777";
+        if (!config.colorStatusCode)
+            config.colorStatusCode = "#777";
+        if (!config.url.includes("://")) {
+            if (config.url.charAt(0) == ".") {
+                config.url = window.location.href + config.url;
+            }
+            else if (config.url.charAt(0) == "/") {
+                config.url = window.location.origin + config.url;
+            }
+        }
+        config._url = new URL(config.url);
         config.json = mkt.stringify(config.dados);
         if (config.metodo != mkt.a.GET) {
             if (config.tipo == mkt.a.JSON) {
@@ -2305,7 +2344,8 @@ class mkt {
             }
         }
         if (!config.quiet) {
-            mkt.gc(nomeRequest);
+            mkt.gc(`%c${config.metodo}: ${config._url.pathname}`, `color:${config.colorRequest}`);
+            mkt.l(`${config._url.origin}${config._url.pathname}%c${config._url.search}`, "color:yellow;");
             if (config.dev) {
                 mkt.l("Header: ", Object.fromEntries(config.headers.entries()));
                 mkt.l("Config: ", config);
@@ -2340,7 +2380,7 @@ class mkt {
                 config.conectou = false;
                 config.statusCode = config.pacote.status;
                 config.erros = await config.pacote.text();
-                mkt.gc("HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText);
+                mkt.gc(`HTTP RETURNO: ${config.pacote.status} ${config.pacote.statusText}`);
                 mkt.l(config.erros);
                 mkt.ge();
                 if (config.pacote.status >= 300) {
@@ -2383,13 +2423,25 @@ class mkt {
                         tam = "";
                     }
                     else {
-                        tam = "{" + tam + "} ";
+                        tam = "[" + tam + "] ";
                     }
-                    mkt.gc("Retorno " + config.pacote.status +
-                        " (" + config.metodo + "): " + tam +
-                        config.url + " (" + config.tipo + ")");
+                    let tipo = "";
+                    if (config.tipo.includes("json")) {
+                        tipo = "JSON";
+                    }
+                    else if (config.tipo.includes("html")) {
+                        tipo = "HTML";
+                    }
+                    if (config.pacote.status == "200" && tipo == "JSON") {
+                        if (!config.colorResponseOK)
+                            config.colorResponseOK = "#0F0";
+                    }
+                    else {
+                        config.colorResponseOK = config.colorRequest;
+                    }
+                    mkt.gc(`%cRetorno %c${config.pacote.status} %c(${config.metodo}) %c${tipo} %c${tam} ${config._url.pathname}`, `color:${config.colorResponseOK}`, `color:${config.colorStatusCode}`, `color:${config.colorRequest}`, `color:${config.colorType}`, `color:${config.colorConteudo}`);
                 }
-                mkt.cte("Request: " + nomeRequest, config.quiet);
+                mkt.cte("Request: " + nomeRequest, config);
                 if (!config.quiet) {
                     mkt.l(config.retorno);
                     mkt.ge();
