@@ -1,5 +1,6 @@
-const swCacheBase = 'okb-v3'; // Estático
-const swCacheNovo = 'okn-v3'; // Dinamico
+const version = "8";
+const swCacheBase = 'okb-v' + version; // Estático
+const swCacheNovo = 'okn-v' + version; // Dinamico
 
 // Assets do cache Base:
 const swAssets = [

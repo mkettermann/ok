@@ -268,7 +268,9 @@ const uiGetDEL = async (tr, listId) => {
 	});
 };
 
-// ACOES
+/**********************************\\
+//  CRUD UI								          \\
+//__________________________________*/
 const uiSetADD = async (listId) => {
 	let obj = mkt.geraObjForm(".operacaoCampos");
 	// Método de ADICIONAR da biblioteca:
@@ -295,3 +297,84 @@ const uiClearFiltro = async (listId) => {
 	mkt.QverOff(".operacaoContainer");
 	mkt.QverOn(".listas");
 };
+
+/**********************************\\
+//  PERFORMANCE						          \\
+//__________________________________*/
+const site_see_performance = (type, name, data, options = "") => {
+	mkt.l(`%c${type}: %c${name} | %c${data ? Math.round(data) + 'ms' : ''} %c${options}`, "color: red",
+		"color: green", "color: gray", "color: lightblue");
+}
+
+// ONLOAD
+window.addEventListener("load", () => {
+	// Navigation Timing API
+	const navEntries = performance.getEntriesByType("navigation");
+	navEntries.forEach(entry => {
+		site_see_performance("navigation", "fetch-start", entry.fetchStart);
+		const ttfb = entry.responseStart - entry.fetchStart;
+		site_see_performance("navigation", "ttfb", ttfb);
+	});
+	// OLD timing API
+	if (navEntries.length == 0) {
+		site_see_performance("navigation", "fetch-start", performance.timing.fetchStart);
+		const ttfb = performance.timing.responseStart - performance.timing.fetchStart;
+		site_see_performance("navigation", "ttfb", ttfb);
+	}
+	// Resource Timing API
+	const resEntries = performance.getEntriesByType("resource");
+	resEntries.forEach(entry => {
+		const size = `${Math.round(entry.encodedBodySize / 1024)}Kb`;
+		const ttfb = entry.responseStart - entry.fetchStart;
+		site_see_performance(entry.initiatorType, entry.name, ttfb, size);
+	});
+
+	// Performance Observer for User Timing
+	const userObserver = new PerformanceObserver(list => {
+		list.getEntries().forEach(entry => {
+			site_see_performance(entry.entryType, entry.name,
+				entry.entryType == "mark" ? entry.startTime : entry.duration);
+		});
+	});
+	userObserver.observe({ entryTypes: ["mark", "measure"] });
+
+	// Paint Timing
+	const paintObserver = new PerformanceObserver(list => {
+		const firstPaint = list.getEntriesByName("first-paint");
+		if (firstPaint.length > 0) {
+			site_see_performance("Paint", "First Paint", firstPaint[0].startTime);
+		}
+		const firstContentfulPaint = list.getEntriesByName("first-contentful-paint");
+		if (firstContentfulPaint.length > 0) {
+			site_see_performance("Paint", "First Contentful Paint", firstContentfulPaint[0].startTime);
+		}
+	});
+	try {
+		userObserver.observe({ entryTypes: ["paint"] });
+	} catch (e) {
+		console.log("Paint Timing API not available");
+	}
+
+	// Long Task API
+	const taskObserver = new PerformanceObserver(list => {
+		list.getEntries().forEach(entry => site_see_performance("Long Task", "Thread used for too long"));
+	});
+	try {
+		taskObserver.observe({ entryTypes: ["longtask"] });
+	} catch (e) { }
+
+	// Frame Timing API
+	const frameObserver = new PerformanceObserver(list => {
+		list.getEntries().forEach(entry => site_see_performance("Frame drop", "Problem",
+			entry.duration));
+	});
+	try {
+		frameObserver.observe({ entryTypes: ["frame"] });
+	} catch (e) { }
+
+	// Server Timing
+	const serverTiming = performance.getEntriesByType("navigation")[0].serverTiming;
+	serverTiming.forEach(timing => {
+		site_see_performance("Server", timing.name, timing.duration);
+	})
+});
