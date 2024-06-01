@@ -24,10 +24,10 @@
 	<!-- MENU ENTRADA -->
 	<div class="body" ondrop="aoDescarregar(event)" ondragover="aoPassarCarga(event)">
 		<header>
-			<h1><img src="/img/icons/ok_72.png" alt="OK" title="OK" width="72" height="72"></h1>
+			<h1><img src="./img/icons/ok_72.png" alt="OK" title="OK" width="72" height="72"></h1>
 		</header>
 		<section>
-			<button type="button" class="btn btn-outline-success" onclick="aoClicarCriar();">Novo</button>
+			<button type="button" class="btn btn-outline-success btnNovoInicial" onclick="aoClicarCriar();">Novo</button>
 		</section>
 		<section class="descarregavel">
 			<label for="file"><span>Abrir arquivo</span><br /><br /><em>Arraste ou clique aqui.</em></label>
@@ -69,29 +69,17 @@
 			<tr id="${mCod}">
 				<td class="ColCell col1 sort-mTit">${mTit}</td>
 				<td class="ColCell col2 btnCrud">
-					<button class="bBotao bCinza" type="button" onclick="uiGetEDIT(this,0);">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" viewBox="0 0 16 16">
-							<path
-								d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-							<path fill-rule="evenodd"
-								d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-						</svg>
-					</button>
+					<button class="btn btn-outline-secondary bi bi-pencil" type="button" onclick="uiGetEDIT(this,0);"></button>
 				</td>
 				<td class="ColCell col3 btnCrud">
-					<button class="bBotao bVermelho" type="button" onclick="uiGetDEL(this,0);">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" viewBox="0 0 16 16">
-							<path
-								d="M14 3a.702.702 0 0 1-.037.225l-1.684 10.104A2 2 0 0 1 10.305 15H5.694a2 2 0 0 1-1.973-1.671L2.037 3.225A.703.703 0 0 1 2 3c0-1.105 2.686-2 6-2s6 .895 6 2zM3.215 4.207l1.493 8.957a1 1 0 0 0 .986.836h4.612a1 1 0 0 0 .986-.836l1.493-8.957C11.69 4.689 9.954 5 8 5c-1.954 0-3.69-.311-4.785-.793z" />
-						</svg>
-					</button>
+					<button class="btn btn-outline-danger bi bi-trash" type="button" onclick="uiGetDEL(this,0);"></button>
 				</td>
 			</tr>
 		</template>
 
 
-		<div class="gridCard botoes">
-			<div class="card">
+		<div class="botoes">
+			<div class="p-2">
 				<button class="bBotao bCinza microPos5" type="button" onclick="uiGetADD(0)">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" class="bi bi-plus-circle" viewBox="0 0 16 16">
 						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -101,7 +89,7 @@
 					<span>Adicionar</span>
 				</button>
 			</div>
-			<div class="card">
+			<div class="p-2">
 				<button class="bBotao bVerde microPos5" type="button" onclick="aoExportar()">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="bVerde" viewBox="0 0 16 16">
 						<path
@@ -112,7 +100,7 @@
 					<span>Codificado</span>
 				</button>
 			</div>
-			<div class="card">
+			<div class="p-2">
 				<button class="bBotao bVermelho microPos5" type="button" onclick="aoSair()">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="bVermelho" viewBox="0 0 16 16">
 						<path fill-rule="evenodd"
@@ -135,8 +123,8 @@
 			<h1 class="operacaoTitulo">Adicionar</h1>
 		</header>
 		<form class="operacaoCampos"></form>
-		<div class="iComGap fsb botoes">
-			<div class="j">
+		<div class="fsb botoes">
+			<div class="">
 				<button class="bBotao bVerde microPos5 operacaoBotao" type="button" onclick="">
 					<svg xmlns="http://www.w3.org/2000/svg" class="operacaoAcaoIco" fill="bCinza" viewBox="0 0 16 16">
 						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -146,7 +134,7 @@
 					<span class="operacaoAcao">Adicionar</span>
 				</button>
 			</div>
-			<div class="j">
+			<div class="">
 				<button class="bBotao bCinza microPos5" type="button" onclick="aoClicarNivel2Cancelar()">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" viewBox="0 0 16 16">
 						<path
@@ -161,9 +149,9 @@
 	<!-- SCRIPTS -->
 	<!-- MODELO DE ADICIONAR E EDITAR -->
 	<template id="modeloOperacao">
-		<div class="iComGap bordaBaixo">
-			<div class="j">${l}</div>
-			<div class="j"> ${field} </div>
+		<div class="bordaBaixo">
+			<div class="">${l}</div>
+			<div class="w-100"> ${field} </div>
 		</div>
 	</template>
 
