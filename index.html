@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="./css/bootstrap.min.css" />
 	<link rel="stylesheet" href="./css/mk.css" />
 	<link rel="stylesheet" href="./css/site.css" />
+	<link rel="stylesheet" href="./css/divListagem.css" />
 	<!-- MOBILE -->
 	<meta name="theme-color" content="#5B00E3" />
 	<link rel="manifest" href="./manifest.json">
@@ -54,7 +55,6 @@
 					<thead>
 						<tr>
 							<th class="sort-mTit">Título</th>
-							<th class="sort-mDat">Data</th>
 							<th class="">Editar</th>
 							<th class="">Excluir</th>
 						</tr>
@@ -63,6 +63,33 @@
 				</table>
 			</div>
 		</div>
+
+		<!-- MODELO LISTAGEM -->
+		<template id="modelo" pk="mCod" ob="mTit" od="0">
+			<tr id="${mCod}">
+				<td class="ColCell sort-mTit">${mTit}</td>
+				<td class="ColCell btnCrud">
+					<button class="bBotao bCinza" type="button" onclick="uiGetEDIT(this,0);">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" viewBox="0 0 16 16">
+							<path
+								d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+							<path fill-rule="evenodd"
+								d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+						</svg>
+					</button>
+				</td>
+				<td class="ColCell btnCrud">
+					<button class="bBotao bVermelho" type="button" onclick="uiGetDEL(this,0);">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" viewBox="0 0 16 16">
+							<path
+								d="M14 3a.702.702 0 0 1-.037.225l-1.684 10.104A2 2 0 0 1 10.305 15H5.694a2 2 0 0 1-1.973-1.671L2.037 3.225A.703.703 0 0 1 2 3c0-1.105 2.686-2 6-2s6 .895 6 2zM3.215 4.207l1.493 8.957a1 1 0 0 0 .986.836h4.612a1 1 0 0 0 .986-.836l1.493-8.957C11.69 4.689 9.954 5 8 5c-1.954 0-3.69-.311-4.785-.793z" />
+						</svg>
+					</button>
+				</td>
+			</tr>
+		</template>
+
+
 		<div class="gridCard botoes">
 			<div class="card">
 				<button class="bBotao bCinza microPos5" type="button" onclick="uiGetADD(0)">
@@ -100,6 +127,7 @@
 			</div>
 		</div>
 	</div>
+
 
 	<!-- OPERACAO CRUD -->
 	<div id="Acao" class="operacaoContainer oculto">
@@ -139,31 +167,6 @@
 		</div>
 	</template>
 
-	<!-- MODELO LISTAGEM -->
-	<template id="modelo" pk="mCod" ob="mTit" od="0">
-		<tr id="${mCod}">
-			<td class="ColCell sort-mTit">${mTit}</td>
-			<td class="ColCell sort-mDat">${mDat}</td>
-			<td class="ColCell btnCrud">
-				<button class="bBotao bCinza" type="button" onclick="uiGetEDIT(this,0);">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" viewBox="0 0 16 16">
-						<path
-							d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-						<path fill-rule="evenodd"
-							d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-					</svg>
-				</button>
-			</td>
-			<td class="ColCell btnCrud">
-				<button class="bBotao bVermelho" type="button" onclick="uiGetDEL(this,0);">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" viewBox="0 0 16 16">
-						<path
-							d="M14 3a.702.702 0 0 1-.037.225l-1.684 10.104A2 2 0 0 1 10.305 15H5.694a2 2 0 0 1-1.973-1.671L2.037 3.225A.703.703 0 0 1 2 3c0-1.105 2.686-2 6-2s6 .895 6 2zM3.215 4.207l1.493 8.957a1 1 0 0 0 .986.836h4.612a1 1 0 0 0 .986-.836l1.493-8.957C11.69 4.689 9.954 5 8 5c-1.954 0-3.69-.311-4.785-.793z" />
-					</svg>
-				</button>
-			</td>
-		</tr>
-	</template>
 
 	<script src="./js/popperv2.js" defer></script>
 	<script src="./js/mkt.js" defer></script>
