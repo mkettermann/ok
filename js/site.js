@@ -13,7 +13,7 @@ let keys = [
 	{ k: "mTit", l: "Título", classes: "w-100", requer: true },
 	{ k: "mTit2", l: "SubTítulo", requer: true, f: false },
 	{ k: "mDat", l: "Data", atr: `type="date"`, v: mkt.dataGetData(), requer: true },
-	{ k: "mDes", l: "Descrição", tag: "textarea", requer: true },
+	{ k: "mDes", l: "Descrição", tag: "textarea", atr: `rows="10"`, requer: true },
 ];
 keys = keys.map(i => new mktm(i).toObject())
 
