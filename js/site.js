@@ -180,7 +180,7 @@ const aoAlterarInput = async (ev) => {
 	let arqs = ev.target.files;
 	if (arqs.length > 0) {
 		let alvo = mkt.Q(ev.target).closest(".descarregavel").children[0];
-		alvo.innerHTML = icoArquivo + arqs[0].name;
+		alvo.innerHTML = arqs[0].name;
 		let conteudo = await lerTexto(arqs[0]);
 		let d = JSON.parse(mkt.from64(fo(conteudo)));
 		aoReceberConteudo(d);
@@ -192,7 +192,7 @@ const aoDescarregar = async (ev) => {
 	let arqs = ev.dataTransfer.files; // the files that were dropped
 	if (arqs.length > 0) {
 		let alvo = mkt.Q(ev.target).closest(".descarregavel").children[0];
-		alvo.innerHTML = icoArquivo + arqs[0].name;
+		alvo.innerHTML = arqs[0].name;
 		let conteudo = await lerTexto(arqs[0]);
 		let d = JSON.parse(mkt.from64(fo(conteudo)));
 		aoReceberConteudo(d);
