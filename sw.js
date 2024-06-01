@@ -6,7 +6,7 @@ const swAssets = [
 	'./',
 	'./html/offline.html',
 	'./index.html',
-	'./js/app.js',
+	'./app.js',
 	'./js/mkt.js',
 	'./js/popperv2.js',
 	'./js/site.js',
