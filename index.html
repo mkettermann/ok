@@ -54,9 +54,9 @@
 				<table class="tableListagem">
 					<thead>
 						<tr>
-							<th class="sort-mTit">Título</th>
-							<th class="">Editar</th>
-							<th class="">Excluir</th>
+							<th class="col1 sort-mTit">Título</th>
+							<th class="col2 ">Editar</th>
+							<th class="col3 ">Excluir</th>
 						</tr>
 					</thead>
 					<tbody class="listBody"></tbody>
@@ -67,8 +67,8 @@
 		<!-- MODELO LISTAGEM -->
 		<template id="modelo" pk="mCod" ob="mTit" od="0">
 			<tr id="${mCod}">
-				<td class="ColCell sort-mTit">${mTit}</td>
-				<td class="ColCell btnCrud">
+				<td class="ColCell col1 sort-mTit">${mTit}</td>
+				<td class="ColCell col2 btnCrud">
 					<button class="bBotao bCinza" type="button" onclick="uiGetEDIT(this,0);">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" viewBox="0 0 16 16">
 							<path
@@ -78,7 +78,7 @@
 						</svg>
 					</button>
 				</td>
-				<td class="ColCell btnCrud">
+				<td class="ColCell col3 btnCrud">
 					<button class="bBotao bVermelho" type="button" onclick="uiGetDEL(this,0);">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="bCinza" viewBox="0 0 16 16">
 							<path
