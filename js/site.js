@@ -1,19 +1,12 @@
-let icoArquivo =
-	"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16' class='icoArquivo'><path d='M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z'/></svg>";
-let = pathIcoAdd =
-	"<path d='M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z'/><path d='M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z'/>";
-let = pathIcoEdit =
-	"<path d='M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z'/>";
-
 let arq = null;
 
 let listas = [];
 let keys = [
-	{ k: "mCod", l: "COD", requer: true, f: false },
-	{ k: "mTit", l: "Título", classes: "w-100", requer: true },
-	{ k: "mTit2", l: "SubTítulo", requer: true, f: false },
-	{ k: "mDat", l: "Data", atr: `type="date"`, v: mkt.dataGetData(), requer: true },
+	{ k: "mTit", l: "Título", requer: true },
 	{ k: "mDes", l: "Descrição", tag: "textarea", atr: `rows="10"`, requer: true },
+	{ k: "mTit2", l: "SubTítulo", requer: true, f: false },
+	{ k: "mCod", l: "COD", requer: true, f: false },
+	{ k: "mDat", l: "Data", atr: `type="date"`, v: mkt.dataGetData(), requer: true },
 ];
 keys = keys.map(i => new mktm(i).toObject())
 
@@ -130,6 +123,9 @@ const configListagem = (conteudo) => {
 	mkt_cfg.aoConcluirExibicao = () => {
 		mkt.Q(".totais").innerHTML = `${listas[0].dadosFull.length} Registros.`
 	};
+	mkt_cfg.aoIniciarListagem = () => {
+		mkt.Q(".totais").innerHTML = ``
+	};
 	return mkt_cfg;
 }
 
@@ -230,7 +226,8 @@ const uiGetADD = async (listId) => {
 	mkt.QverOn(".operacaoContainer");
 	mkt.Q(".operacaoTitulo").innerHTML = "Adicionar";
 	mkt.Q(".operacaoAcao").innerHTML = "Adicionar";
-	mkt.Q(".operacaoAcaoIco").innerHTML = pathIcoAdd;
+	mkt.Q(".operacaoBotao i").classList.remove("bi-pencil");
+	mkt.Q(".operacaoBotao i").classList.add("bi-plus-circle");
 	mkt.Q(".operacaoBotao").setAttribute(
 		"onclick",
 		"uiSetADD(" + listId + ")"
@@ -238,6 +235,10 @@ const uiGetADD = async (listId) => {
 	await mkt.moldeOA(listas[listId].getModel(), "#modeloOperacao", ".operacaoCampos", true, false);
 	mkt.QAll(".operacaoCampos .iConsultas").forEach(e => { e.classList.remove("iConsultas"); e.classList.add("iNovo") })
 	mkt.Q(".operacaoCampos .iNovo[name='" + listas[listId].c.pk + "']").value = listas[listId].getNewPK();
+	mkt.QAll(".operacaoCampos .iNovo").forEach(e => {
+		e.classList.add("w-100")
+	});
+	mkt.Q(".operacaoCampos .iNovo[name='mTit']").focus();
 };
 
 const uiGetEDIT = async (este, listId) => {
@@ -246,13 +247,17 @@ const uiGetEDIT = async (este, listId) => {
 	mkt.QverOn(".operacaoContainer");
 	mkt.Q(".operacaoTitulo").innerHTML = "Editar";
 	mkt.Q(".operacaoAcao").innerHTML = "Editar";
-	mkt.Q(".operacaoAcaoIco").innerHTML = pathIcoEdit;
+	mkt.Q(".operacaoBotao i").classList.remove("bi-plus-circle");
+	mkt.Q(".operacaoBotao i").classList.add("bi-pencil");
 	mkt.Q(".operacaoBotao").setAttribute(
 		"onclick",
 		"uiSetEDIT('" + listas[listId].c.pk + "','" + cod + "', " + listId + ")"
 	);
 	await mkt.moldeOA(listas[listId].getModel(cod), "#modeloOperacao", ".operacaoCampos");
 	mkt.QAll(".operacaoCampos .iConsultas").forEach(e => { e.classList.remove("iConsultas"); e.classList.add("iEdit") })
+	mkt.QAll(".operacaoCampos .iEdit").forEach(e => {
+		e.classList.add("w-100")
+	});
 };
 
 const uiGetDEL = async (tr, listId) => {
