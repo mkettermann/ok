@@ -17,7 +17,7 @@ if ("serviceWorker" in navigator) {
 						mkt.l("%cNova Versão Instalada e Waiting Reload. ", "color:lime;");
 					} else {
 						mkt.l("%cNova versão atualmente em uso.", "color:green;");
-						mkt.Q("#swOutputInfo")?.innerHTML = "Nova Versão instalada."
+						if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = "Nova Versão instalada.";
 					}
 				})
 			})
