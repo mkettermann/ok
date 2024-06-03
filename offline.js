@@ -14,7 +14,7 @@ if ("serviceWorker" in navigator) {
 				swInstall.addEventListener("statechange", () => {
 					if (swInstall.state == "installed") {
 						// Nova Versão Instalada (Informar usuário)
-						mkt.l("%cNova Versão Instalada e Waiting Reload: ", "color:lime;");
+						mkt.l("%cNova Versão Instalada e Waiting Reload. ", "color:lime;");
 					} else {
 						mkt.l("%cNova versão atualmente em uso.", "color:green;");
 					}
@@ -28,8 +28,12 @@ if ("serviceWorker" in navigator) {
 	mkt.l("%cSem suporte a Service Worker (Verificar HTTPS)", "color:red;background-color:black;");
 }
 
-class mkOffline {
-	static getUpdate = () => {
-
+class mkSw {
+	// Check for Updates.
+	static getUpdate = (tag) => {
+		mkt.l("%cChecking for Updates.", "color:green;");
+		navigator.serviceWorker?.getRegistration().then(reg => {
+			reg.update();
+		});
 	}
 }
