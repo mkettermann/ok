@@ -42,15 +42,15 @@ const sw_cacheUpdate = (cache) => {
 };
 
 // cache size limit function
-const sw_cacheLimitSize = (name, size) => {
-	caches.open(name).then(cache => {
-		cache.keys().then(keys => {
-			if (keys.length > size) {
-				cache.delete(keys[0]).then(sw_cacheLimitSize(name, size));
-			}
-		});
-	});
-};
+// const sw_cacheLimitSize = (name, size) => {
+// 	caches.open(name).then(cache => {
+// 		cache.keys().then(keys => {
+// 			if (keys.length > size) {
+// 				cache.delete(keys[0]).then(sw_cacheLimitSize(name, size));
+// 			}
+// 		});
+// 	});
+// };
 
 // Ao instalar uma nova versão
 self.addEventListener('install', ev => {
@@ -75,21 +75,28 @@ let policyFirst = "CACHE";
 
 // Proxy
 self.addEventListener("fetch", ev => {
-	// console.log("Request: ", ev.request);
-
 	// Aqui é possível alterar entre as políticas baseado na url do fetch.
 
-	// Para cada Request, Responder com 
-	if (policyFirst == "CACHE") {
+	// SE online, NetWork First, SE offline, Cache First.
+	if (navigator.onLine) {
+		// Network-First. All Online
 		ev.respondWith(
-			// Cache-First. All Cache First
+			fetch(ev.request)
+				.catch(err => {
+					// Se Network Falhar, retorna o Cache.
+					return caches.match(ev.request);
+				})
+		);
+	} else {
+		// Cache-First. All Cache First
+		ev.respondWith(
 			// Mesma URL = Offline Cache.
 			caches.match(ev.request).then(cacheRes => {
 				// Always try get
 				const returnNetwork = fetch(ev.request).then((fetchRes) => {
 					return caches.open(swCacheNovo).then(cache => {
 						cache.put(ev.request.url, fetchRes.clone());
-						sw_cacheLimitSize(swCacheNovo, 50);
+						//sw_cacheLimitSize(swCacheNovo, 50);
 						return fetchRes;
 					});
 				});
@@ -99,15 +106,6 @@ self.addEventListener("fetch", ev => {
 					return caches.match(swAssets[1]);
 				}
 			})
-		);
-	} else {
-		// Network-First. All Online
-		ev.respondWith(
-			fetch(ev.request)
-				.catch(err => {
-					// Se Network Falhar, retorna o Cache.
-					return caches.match(ev.request);
-				})
 		);
 	}
 })
