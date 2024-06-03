@@ -1,3 +1,7 @@
+/**********************************\\
+//  MK SW - Tools - Offline         \\
+//__________________________________*/
+
 if ("serviceWorker" in navigator) {
 	// Registro do SW
 	navigator.serviceWorker.register("./sw.js").then((reg) => {
@@ -45,5 +49,14 @@ class mkSw {
 		navigator.serviceWorker?.getRegistration().then(reg => {
 			reg.unregister();
 		});
+	}
+	// Message To SW.
+	static sendMessageToSW = (message) => {
+		mkt.l("%cMessage To SW:", "color:gold;", message);
+		if (navigator.serviceWorker.controller) {
+			navigator.serviceWorker.controller.postMessage(message)
+		} else {
+			mkt.l("%cSem controller para enviar mensagem.", "color:red;");
+		}
 	}
 }
