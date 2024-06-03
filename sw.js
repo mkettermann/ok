@@ -2,7 +2,7 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "17";
+const version = "19";
 const swCacheBase = 'okb-v' + version; // Estático
 const swCacheNovo = 'okn-v' + version; // Dinamico
 
@@ -76,7 +76,7 @@ self.addEventListener('message', async (ev) => {
 	let msg = ev.data;
 	console.log(`%cSW:%c MESSAGE (WORKER)`, "color:green;", "color:yellow;", msg);
 	switch (msg.action) {
-		case "update":
+		case "cacheUpdate":
 			ev.waitUntil(sw_cacheUpdate(swCacheBase).then(r => {
 				sw_messageToClients("cache-atualizado");
 			}));
