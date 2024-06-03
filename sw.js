@@ -1,3 +1,7 @@
+/**********************************\\
+//  MK Service Worker               \\
+//__________________________________*/
+
 const version = "16";
 const swCacheBase = 'okb-v' + version; // Estático
 const swCacheNovo = 'okn-v' + version; // Dinamico
@@ -61,6 +65,10 @@ self.addEventListener('install', ev => {
 // Ao ativar nova versão
 self.addEventListener("activate", ev => {
 	console.log(`%cSW:%c ACTIVATE`, "color:green;", "color:lightblue;");
+	// Aqui limpa versoes antigas.
+	// Possivel problema: 2 Abas, usando o mesmo cache,
+	//   mas uma aba avança versão e a outra não.
+	// A segunda irá limpar o cache da primeira.
 	ev.waitUntil(
 		caches.keys().then(versoesCache => {
 			return Promise.all(versoesCache
