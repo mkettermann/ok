@@ -1,4 +1,4 @@
-const version = "10";
+const version = "11";
 const swCacheBase = 'okb-v' + version; // Estático
 const swCacheNovo = 'okn-v' + version; // Dinamico
 

@@ -27,3 +27,9 @@ if ("serviceWorker" in navigator) {
 } else {
 	mkt.l("%cSem suporte a Service Worker (Verificar HTTPS)", "color:red;background-color:black;");
 }
+
+class mkOffline {
+	static getUpdate = () => {
+
+	}
+}

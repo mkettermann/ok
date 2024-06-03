@@ -299,6 +299,14 @@ const uiClearFiltro = async (listId) => {
 };
 
 /**********************************\\
+//  PWA UI								          \\
+//__________________________________*/
+
+mkt.Ao("click", "#indexUpdate", () => {
+	mkOffline.getUpdate();
+})
+
+/**********************************\\
 //  PERFORMANCE						          \\
 //__________________________________*/
 const site_see_performance = (type, name, data, options = "") => {
