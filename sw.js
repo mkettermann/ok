@@ -36,7 +36,7 @@ const swAssets = [
 ];
 
 const sw_cacheUpdate = (cache) => {
-	console.log('UPDATING CACHE');
+	console.log(`%cSW:%c UPDATING CACHE`, "color:green;", "color:yellow;");
 	const stack = [];
 	// ADD ==> Coleta as rotas e guarda.
 	swAssets.forEach((rota) => stack.push(
@@ -44,6 +44,19 @@ const sw_cacheUpdate = (cache) => {
 	));
 	return Promise.all(stack);
 };
+
+const sw_messageToClients = (action = "cache-atualizado") => {
+	clients.matchAll({
+		includeUncontrolled: false,
+		type: "window",
+	}).then(clients => {
+		clients.forEach(client => {
+			client.postMessage({
+				action: action
+			})
+		});
+	})
+}
 
 // cache size limit function
 // const sw_cacheLimitSize = (name, size) => {
@@ -57,10 +70,15 @@ const sw_cacheUpdate = (cache) => {
 // };
 
 // Comunicação
-self.addEventListener('message', ev => {
+self.addEventListener('message', async (ev) => {
 	let msg = ev.data;
-	console.log(`%cSW:%c MESSAGE`, "color:green;", "color:yellow;", msg);
-	ev.waitUntil(caches.open(swCacheBase).then(sw_cacheUpdate));
+	console.log(`%cSW:%c MESSAGE (WORKER)`, "color:green;", "color:yellow;", msg);
+	switch (msg.action) {
+		case "update":
+			await sw_cacheUpdate(swCacheBase);
+			sw_messageToClients("cache-atualizado");
+			break;
+	}
 });
 
 // Ao instalar uma nova versão

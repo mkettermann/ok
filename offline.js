@@ -31,6 +31,15 @@ if ("serviceWorker" in navigator) {
 			mkt.l("%cErro durante verificação da versão atual.", "color:red;background-color:black;");
 		});
 
+	//
+	navigator.serviceWorker.addEventListener("message", ev => {
+		switch (ev.data.action) {
+			case "cache-atualizado":
+
+				break;
+		}
+	})
+
 } else {
 	mkt.l("%cSem suporte a Service Worker (Verificar HTTPS)", "color:red;background-color:black;");
 }
