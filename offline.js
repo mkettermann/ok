@@ -36,4 +36,11 @@ class mkSw {
 			reg.update();
 		});
 	}
+	// Desregistrar SW.
+	static del = (tag) => {
+		mkt.l("%cDesregistrando SW.", "color:yellow;");
+		navigator.serviceWorker?.getRegistration().then(reg => {
+			reg.unregister();
+		});
+	}
 }
