@@ -85,13 +85,14 @@ self.addEventListener("fetch", ev => {
 			// Cache-First. All Cache First
 			// Mesma URL = Offline Cache.
 			caches.match(ev.request).then(cacheRes => {
-				return cacheRes || fetch(ev.request).then(fetchRes => {
+				const returnNetwork = fetch(ev.request).then((fetchRes) => {
 					return caches.open(swCacheNovo).then(cache => {
 						cache.put(ev.request.url, fetchRes.clone());
 						sw_cacheLimitSize(swCacheNovo, 50);
 						return fetchRes;
-					})
+					});
 				});
+				return cacheRes || returnNetwork;
 			}).catch(() => {
 				if (ev.request.url.indexOf('.html') > -1) {
 					return caches.match(swAssets[1]);
