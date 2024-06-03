@@ -56,6 +56,13 @@ const sw_cacheUpdate = (cache) => {
 // 	});
 // };
 
+// Comunicação
+self.addEventListener('message', ev => {
+	let msg = ev.data;
+	console.log(`%cSW:%c MESSAGE`, "color:green;", "color:yellow;", msg);
+	ev.waitUntil(caches.open(swCacheBase).then(sw_cacheUpdate));
+});
+
 // Ao instalar uma nova versão
 self.addEventListener('install', ev => {
 	console.log(`%cSW:%c INSTALL`, "color:green;", "color:yellow;");

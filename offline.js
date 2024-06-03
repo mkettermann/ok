@@ -59,4 +59,10 @@ class mkSw {
 			mkt.l("%cSem controller para enviar mensagem.", "color:red;");
 		}
 	}
+	// Message To Update All
+	static requestUpdate = (message) => {
+		mkSw.sendMessageToSW({
+			action: "update"
+		})
+	}
 }
