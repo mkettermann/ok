@@ -20,6 +20,7 @@ if ("serviceWorker" in navigator) {
 						// Nova Versão Instalada (Informar usuário)
 						mkt.l("%cNova Versão Instalada e Waiting Reload. ", "color:lime;");
 						if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = "Uma nova versão foi encontrada. Atualize.";
+						if (mkt.Q("#indexRefresh")) mkt.QverOn("#indexRefresh");
 					} else {
 						// Atual em uso
 						mkt.l("%cNova versão atualmente em uso.", "color:green;");
