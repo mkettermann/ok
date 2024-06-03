@@ -23,8 +23,17 @@
 <body>
 	<!-- MENU ENTRADA -->
 	<div class="body" ondrop="aoDescarregar(event)" ondragover="aoPassarCarga(event)">
-		<header>
-			<h1><img src="./img/icons/ok_72.png" alt="OK" title="OK" width="72" height="72"></h1>
+		<header class="areaTopo">
+			<div class="areaStatus">
+				<div class="divInputCard">
+					<button type="button" class="btn btn-outline-info">
+						Verficar Updates
+					</button>
+				</div>
+			</div>
+			<div class="areaLogo">
+				<img src="./img/icons/ok_72.png" alt="OK" title="OK" width="72" height="72">
+			</div>
 		</header>
 		<section>
 			<button type="button" class="btn btn-outline-success btnNovoInicial" onclick="aoClicarCriar();">Novo</button>
