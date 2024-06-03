@@ -46,14 +46,14 @@ if ("serviceWorker" in navigator) {
 }
 
 class mkSw {
-	// Check for Updates.
+	// Atualizar no SW.
 	static getUpdate = (tag) => {
 		mkt.l("%cChecking for Updates.", "color:green;");
 		navigator.serviceWorker?.getRegistration().then(reg => {
 			reg.update();
 		});
 	}
-	// Desregistrar SW.
+	// Desregistrar no SW.
 	static del = (tag) => {
 		mkt.l("%cDesregistrando SW.", "color:yellow;");
 		navigator.serviceWorker?.getRegistration().then(reg => {
@@ -70,9 +70,9 @@ class mkSw {
 		}
 	}
 	// Update All Clients via Message
-	static requestUpdate = () => {
+	static requestCacheUpdate = () => {
 		mkSw.sendMessageToSW({
-			action: "update"
+			action: "cacheUpdate"
 		})
 	}
 }
