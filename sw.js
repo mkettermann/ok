@@ -71,8 +71,6 @@ self.addEventListener("activate", ev => {
 	);
 })
 
-let policyFirst = "CACHE";
-
 // Proxy
 self.addEventListener("fetch", ev => {
 	// Aqui é possível alterar entre as políticas baseado na url do fetch.
