@@ -305,8 +305,8 @@ const uiClearFiltro = async (listId) => {
 mkt.Ao("click", "#indexUpdate", () => {
 	mkSw.getUpdate("#swOutputInfo");
 })
-mkt.Ao("click", "#indexUnregister", () => {
-	mkSw.del("#swOutputInfo");
+mkt.Ao("click", "#indexReqUpdate", () => {
+	mkSw.requestUpdate();
 })
 
 /**********************************\\

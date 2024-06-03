@@ -35,14 +35,16 @@ const swAssets = [
 	'./js/site.js',
 ];
 
-const sw_cacheUpdate = (cache) => {
+const sw_cacheUpdate = async (nameCache) => {
 	console.log(`%cSW:%c UPDATING CACHE`, "color:green;", "color:yellow;");
-	const stack = [];
-	// ADD ==> Coleta as rotas e guarda.
-	swAssets.forEach((rota) => stack.push(
-		cache.add(rota).catch(_ => console.log(`%cSW:%c FALHA ao fazer CACHE nesta rota > ${rota}`, "color:green;", "background-color:black;color:red;"))
-	));
-	return Promise.all(stack);
+	caches.open(nameCache).then((cache) => {
+		const stack = [];
+		// ADD ==> Coleta as rotas e guarda.
+		swAssets.forEach((rota) => stack.push(
+			cache.add(rota).catch(_ => console.log(`%cSW:%c FALHA ao fazer CACHE nesta rota > ${rota}`, "color:green;", "background-color:black;color:red;"))
+		));
+		return Promise.all(stack);
+	})
 };
 
 const sw_messageToClients = (action = "cache-atualizado") => {
@@ -75,8 +77,9 @@ self.addEventListener('message', async (ev) => {
 	console.log(`%cSW:%c MESSAGE (WORKER)`, "color:green;", "color:yellow;", msg);
 	switch (msg.action) {
 		case "update":
-			await sw_cacheUpdate(swCacheBase);
-			sw_messageToClients("cache-atualizado");
+			ev.waitUntil(sw_cacheUpdate(swCacheBase).then(r => {
+				sw_messageToClients("cache-atualizado");
+			}));
 			break;
 	}
 });
@@ -84,7 +87,7 @@ self.addEventListener('message', async (ev) => {
 // Ao instalar uma nova versão
 self.addEventListener('install', ev => {
 	console.log(`%cSW:%c INSTALL`, "color:green;", "color:yellow;");
-	ev.waitUntil(caches.open(swCacheBase).then(sw_cacheUpdate));
+	ev.waitUntil(sw_cacheUpdate(swCacheBase));
 });
 
 // Ao ativar nova versão
