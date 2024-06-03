@@ -85,6 +85,7 @@ self.addEventListener("fetch", ev => {
 			// Cache-First. All Cache First
 			// Mesma URL = Offline Cache.
 			caches.match(ev.request).then(cacheRes => {
+				// Always try get
 				const returnNetwork = fetch(ev.request).then((fetchRes) => {
 					return caches.open(swCacheNovo).then(cache => {
 						cache.put(ev.request.url, fetchRes.clone());
