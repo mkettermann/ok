@@ -35,7 +35,7 @@ if ("serviceWorker" in navigator) {
 	navigator.serviceWorker.addEventListener("message", ev => {
 		switch (ev.data.action) {
 			case "cache-atualizado":
-
+				if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = "Cache Atualizado.";
 				break;
 		}
 	})
