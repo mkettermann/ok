@@ -306,7 +306,7 @@ mkt.Ao("click", "#indexUpdate", () => {
 	mkSw.getUpdate("#swOutputInfo");
 })
 mkt.Ao("click", "#indexReqUpdate", () => {
-	mkSw.requestUpdate();
+	mkSw.requestCacheUpdate();
 })
 mkt.Ao("click", "#indexRefresh", () => {
 	window.location.reload();
