@@ -1,4 +1,4 @@
-const version = "9";
+const version = "10";
 const swCacheBase = 'okb-v' + version; // Estático
 const swCacheNovo = 'okn-v' + version; // Dinamico
 
@@ -6,7 +6,7 @@ const swCacheNovo = 'okn-v' + version; // Dinamico
 const swAssets = [
 	'./',
 	'./index.html',
-	'./app.js',
+	'./offline.js',
 	'./css/bootstrap-icons/font/bootstrap-icons.css',
 	'./css/bootstrap-icons/font/bootstrap-icons.min.css',
 	'./css/bootstrap-icons/font/fonts/bootstrap-icons.woff',
