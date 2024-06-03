@@ -50,7 +50,7 @@ class mkSw {
 			reg.unregister();
 		});
 	}
-	// Message To SW.
+	// Message To SW. Via Controller
 	static sendMessageToSW = (message) => {
 		mkt.l("%cMessage To SW:", "color:gold;", message);
 		if (navigator.serviceWorker.controller) {
