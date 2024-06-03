@@ -25,19 +25,16 @@
 	<div class="body" ondrop="aoDescarregar(event)" ondragover="aoPassarCarga(event)">
 		<header class="areaTopo">
 			<div class="areaStatus">
-				<div class="flr">
-					<div class="ftb">
-						<button type="button" id="indexUpdate" class="btn btn-outline-info">
-							Verficar Updates
-						</button>
-						<output id="swOutputInfo"></output>
+				<div class="ftb">
+					<div class="flr">
 						<button type="button" id="indexRefresh" class="btn btn-outline-primary oculto">
-							Atualizar Nova Versão.
+							<i class="bi bi-arrow-clockwise"></i> Reload
+						</button>
+						<button type="button" id="indexReqUpdate" class="btn btn-outline-danger">
+							<i class="bi bi-box-arrow-in-down-left"></i> Request Update
 						</button>
 					</div>
-					<button type="button" id="indexReqUpdate" class="btn btn-outline-danger">
-						Request Update
-					</button>
+					<output id="swOutputInfo"></output>
 				</div>
 			</div>
 			<div class="areaLogo">
