@@ -313,8 +313,8 @@ mkt.Ao("click", "#indexUnregister", () => {
 //  PERFORMANCE						          \\
 //__________________________________*/
 const site_see_performance = (type, name, data, options = "") => {
-	mkt.l(`%c${type}: %c${name} | %c${data ? Math.round(data) + 'ms' : ''} %c${options}`, "color: red",
-		"color: green", "color: gray", "color: lightblue");
+	// mkt.l(`%c${type}: %c${name} | %c${data ? Math.round(data) + 'ms' : ''} %c${options}`, "color: red",
+	// 	"color: green", "color: gray", "color: lightblue");
 }
 
 // ONLOAD

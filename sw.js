@@ -34,6 +34,7 @@ const swAssets = [
 const sw_cacheUpdate = (cache) => {
 	console.log('UPDATING CACHE');
 	const stack = [];
+	// ADD ==> Coleta as rotas e guarda.
 	swAssets.forEach((rota) => stack.push(
 		cache.add(rota).catch(_ => console.log(`%cSW:%c FALHA ao fazer CACHE nesta rota > ${rota}`, "color:green;", "background-color:black;color:red;"))
 	));
@@ -70,22 +71,41 @@ self.addEventListener("activate", ev => {
 	);
 })
 
+let policyFirst = "CACHE";
+
 // Proxy
 self.addEventListener("fetch", ev => {
 	// console.log("Request: ", ev.request);
-	ev.respondWith(
-		caches.match(ev.request).then(cacheRes => {
-			return cacheRes || fetch(ev.request).then(fetchRes => {
-				return caches.open(swCacheNovo).then(cache => {
-					cache.put(ev.request.url, fetchRes.clone());
-					sw_cacheLimitSize(swCacheNovo, 50);
-					return fetchRes;
+
+	// Aqui é possível alterar entre as políticas baseado na url do fetch.
+
+	// Para cada Request, Responder com 
+	if (policyFirst == "CACHE") {
+		ev.respondWith(
+			// Cache-First. All Cache First
+			// Mesma URL = Offline Cache.
+			caches.match(ev.request).then(cacheRes => {
+				return cacheRes || fetch(ev.request).then(fetchRes => {
+					return caches.open(swCacheNovo).then(cache => {
+						cache.put(ev.request.url, fetchRes.clone());
+						sw_cacheLimitSize(swCacheNovo, 50);
+						return fetchRes;
+					})
+				});
+			}).catch(() => {
+				if (ev.request.url.indexOf('.html') > -1) {
+					return caches.match(swAssets[1]);
+				}
+			})
+		);
+	} else {
+		// Network-First. All Online
+		ev.respondWith(
+			fetch(ev.request)
+				.catch(err => {
+					// Se Network Falhar, retorna o Cache.
+					return caches.match(ev.request);
 				})
-			});
-		}).catch(() => {
-			if (ev.request.url.indexOf('.html') > -1) {
-				return caches.match(swAssets[1]);
-			}
-		})
-	);
+		);
+	}
 })
