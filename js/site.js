@@ -308,6 +308,9 @@ mkt.Ao("click", "#indexUpdate", () => {
 mkt.Ao("click", "#indexReqUpdate", () => {
 	mkSw.requestUpdate();
 })
+mkt.Ao("click", "#indexRefresh", () => {
+	window.location.reload();
+})
 
 /**********************************\\
 //  PERFORMANCE						          \\
