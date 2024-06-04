@@ -47,29 +47,25 @@ const sw_cacheUpdate = async (nameCache) => {
 	})
 };
 
-const sw_messageToClients = (action = "cache-atualizado") => {
+const sw_messageToClients = (action = "cache-atualizado", str = "") => {
 	clients.matchAll({
 		includeUncontrolled: false,
 		type: "window",
 	}).then(clients => {
 		clients.forEach(client => {
 			client.postMessage({
-				action: action
+				action: action,
+				str: str,
 			})
 		});
 	})
 }
 
-// cache size limit function
-// const sw_cacheLimitSize = (name, size) => {
-// 	caches.open(name).then(cache => {
-// 		cache.keys().then(keys => {
-// 			if (keys.length > size) {
-// 				cache.delete(keys[0]).then(sw_cacheLimitSize(name, size));
-// 			}
-// 		});
-// 	});
-// };
+// Ao instalar uma nova versão
+self.addEventListener('sync', ev => {
+	console.log(`%cSW:%c SYNC`, "color:green;", "color:yellow;");
+	ev.waitUntil(sw_messageToClients("sync", ev.tag));
+});
 
 // Comunicação
 self.addEventListener('message', async (ev) => {

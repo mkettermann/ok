@@ -38,6 +38,9 @@ if ("serviceWorker" in navigator) {
 			case "cache-atualizado":
 				if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = "Cache Atualizado.";
 				break;
+			case "sync":
+				if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Sync Tag: ${ev.data.str}`;
+				break;
 		}
 	})
 
@@ -47,22 +50,31 @@ if ("serviceWorker" in navigator) {
 
 class mkSw {
 	// Atualizar no SW.
-	static getUpdate = (tag) => {
-		mkt.l("%cChecking for Updates.", "color:green;");
+	static getUpdate = () => {
+		mkt.l("%c>> Update Register.", "color:gold;");
 		navigator.serviceWorker?.getRegistration().then(reg => {
 			reg.update();
 		});
 	}
 	// Desregistrar no SW.
-	static del = (tag) => {
-		mkt.l("%cDesregistrando SW.", "color:yellow;");
+	static del = () => {
+		mkt.l("%c>> Desregistrando SW.", "color:gold;");
 		navigator.serviceWorker?.getRegistration().then(reg => {
 			reg.unregister();
 		});
 	}
+	// Registrar pra Sincronizar
+	static returnTagOnSync = (tag) => {
+		if ("SyncManager" in window) {
+			mkt.l("%c>> Sending to Sync SW:", "color:gold;", tag);
+			navigator.serviceWorker?.getRegistration().then(reg => {
+				reg.sync.register(tag);
+			});
+		}
+	}
 	// Message To SW. Via Controller
 	static sendMessageToSW = (message) => {
-		mkt.l("%cMessage To SW:", "color:gold;", message);
+		mkt.l("%c>> To SW:", "color:gold;", message);
 		if (navigator.serviceWorker.controller) {
 			navigator.serviceWorker.controller.postMessage(message)
 		} else {

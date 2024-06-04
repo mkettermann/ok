@@ -301,9 +301,8 @@ const uiClearFiltro = async (listId) => {
 /**********************************\\
 //  PWA UI								          \\
 //__________________________________*/
-
-mkt.Ao("click", "#indexUpdate", () => {
-	mkSw.getUpdate("#swOutputInfo");
+mkt.Ao("click", "#returnOnSync", () => {
+	mkSw.returnTagOnSync("SincronizarAgora");
 })
 mkt.Ao("click", "#indexReqUpdate", () => {
 	mkSw.requestCacheUpdate();
