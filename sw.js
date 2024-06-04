@@ -2,7 +2,7 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "20";
+const version = "24";
 const swCacheBase = 'okb-v' + version; // Estático
 const swCacheNovo = 'okn-v' + version; // Dinamico
 
@@ -36,12 +36,12 @@ const swAssets = [
 ];
 
 const sw_cacheUpdate = async (nameCache) => {
-	console.log(`%cSW:%c UPDATING CACHE`, "color:green;", "color:yellow;");
+	console.log(`%cSW:%c UPDATING CACHE`, "color:MediumSpringGreen;", "color:MediumOrchid;");
 	caches.open(nameCache).then((cache) => {
 		const stack = [];
 		// ADD ==> Coleta as rotas e guarda.
 		swAssets.forEach((rota) => stack.push(
-			cache.add(rota).catch(_ => console.log(`%cSW:%c FALHA ao fazer CACHE nesta rota > ${rota}`, "color:green;", "background-color:black;color:red;"))
+			cache.add(rota).catch(_ => console.log(`%cSW:%c FALHA ao fazer CACHE nesta rota > ${rota}`, "color:MediumSpringGreen;", "background-color:black;color:red;"))
 		));
 		return Promise.all(stack);
 	})
@@ -70,7 +70,7 @@ const sw_messageToClients = (action = "cache-atualizado", str = "") => {
 // Comunicação
 self.addEventListener('message', async (ev) => {
 	let msg = ev.data;
-	console.log(`%cSW:%c MESSAGE (WORKER)`, "color:green;", "color:yellow;", msg);
+	console.log(`%cSW:%c MESSAGE (WORKER)`, "color:MediumSpringGreen;", "color:MediumOrchid;", msg);
 	switch (msg.action) {
 		case "cacheUpdate":
 			ev.waitUntil(sw_cacheUpdate(swCacheBase).then(r => {
@@ -82,25 +82,28 @@ self.addEventListener('message', async (ev) => {
 
 // Ao instalar uma nova versão
 self.addEventListener('install', ev => {
-	console.log(`%cSW:%c INSTALL`, "color:green;", "color:yellow;");
+	console.log(`%cSW:%c INSTALL`, "color:MediumSpringGreen;", "color:MediumOrchid;");
 	ev.waitUntil(sw_cacheUpdate(swCacheBase));
+	self.skipWaiting();
 });
 
 // Ao ativar nova versão
 self.addEventListener("activate", ev => {
-	console.log(`%cSW:%c ACTIVATE`, "color:green;", "color:lightblue;");
+	console.log(`%cSW:%c ACTIVATE`, "color:MediumSpringGreen;", "color:MediumOrchid;");
 	// Aqui limpa versoes antigas.
 	// Possivel problema: 2 Abas, usando o mesmo cache,
 	//   mas uma aba avança versão e a outra não.
 	// A segunda irá limpar o cache da primeira.
-	ev.waitUntil(
-		caches.keys().then(versoesCache => {
+	ev.waitUntil(caches.keys()
+		.then(versoesCache => {
 			return Promise.all(versoesCache
 				.filter(k => k !== swCacheBase && k !== swCacheNovo)
 				.map(k => caches.delete(k))
-			);
+			)
 		})
 	);
+	ev.waitUntil(self.clients.claim());
+
 })
 
 // Proxy
