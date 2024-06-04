@@ -2,7 +2,7 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "24";
+const version = "25";
 const swCacheBase = 'okb-v' + version; // Estático
 const swCacheNovo = 'okn-v' + version; // Dinamico
 
