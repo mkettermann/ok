@@ -2,7 +2,7 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "19";
+const version = "20";
 const swCacheBase = 'okb-v' + version; // Estático
 const swCacheNovo = 'okn-v' + version; // Dinamico
 
@@ -61,11 +61,11 @@ const sw_messageToClients = (action = "cache-atualizado", str = "") => {
 	})
 }
 
-// Ao instalar uma nova versão
-self.addEventListener('sync', ev => {
-	console.log(`%cSW:%c SYNC`, "color:green;", "color:yellow;");
-	ev.waitUntil(sw_messageToClients("sync", ev.tag));
-});
+// Ao receber solicitação de sync. Mas falha muito
+// self.addEventListener('sync', ev => {
+// 	console.log(`%cSW:%c SYNC`, "color:green;", "color:yellow;");
+// 	ev.waitUntil(sw_messageToClients("sync", ev.tag));
+// });
 
 // Comunicação
 self.addEventListener('message', async (ev) => {

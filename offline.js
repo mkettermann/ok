@@ -39,6 +39,7 @@ if ("serviceWorker" in navigator) {
 				if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = "Cache Atualizado.";
 				break;
 			case "sync":
+				mkt.l("%cSync recebido:", "color:green;", ev.data.str);
 				if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Sync Tag: ${ev.data.str}`;
 				break;
 		}
@@ -64,14 +65,14 @@ class mkSw {
 		});
 	}
 	// Registrar pra Sincronizar
-	static returnTagOnSync = (tag) => {
-		if ("SyncManager" in window) {
-			mkt.l("%c>> Sending to Sync SW:", "color:gold;", tag);
-			navigator.serviceWorker?.getRegistration().then(reg => {
-				reg.sync.register(tag);
-			});
-		}
-	}
+	// static returnTagOnSync = (tag) => {
+	// 	if ("SyncManager" in window) {
+	// 		mkt.l("%c>> Sending to Sync SW:", "color:gold;", tag);
+	// 		navigator.serviceWorker?.getRegistration().then(reg => {
+	// 			reg.sync.register(tag);
+	// 		});
+	// 	}
+	// }
 	// Message To SW. Via Controller
 	static sendMessageToSW = (message) => {
 		mkt.l("%c>> To SW:", "color:gold;", message);
