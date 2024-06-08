@@ -2,9 +2,7 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "25";
-const swCacheBase = 'okb-v' + version; // Estático
-const swCacheNovo = 'okn-v' + version; // Dinamico
+const version = "_1";
 
 // Assets do cache Base:
 const swAssets = [
@@ -36,12 +34,12 @@ const swAssets = [
 ];
 
 const sw_cacheUpdate = async (nameCache) => {
-	console.log(`%cSW:%c UPDATING CACHE`, "color:MediumSpringGreen;", "color:MediumOrchid;");
+	console.log(`%cSW__IN:%c UPDATING`, "color:MediumSpringGreen;", "color:MediumOrchid;");
 	caches.open(nameCache).then((cache) => {
 		const stack = [];
 		// ADD ==> Coleta as rotas e guarda.
 		swAssets.forEach((rota) => stack.push(
-			cache.add(rota).catch(_ => console.log(`%cSW:%c FALHA ao fazer CACHE nesta rota > ${rota}`, "color:MediumSpringGreen;", "background-color:black;color:red;"))
+			cache.add(rota).catch(_ => console.log(`%cSW__IN:%c FALHA ao fazer CACHE nesta rota > ${rota}`, "color:MediumSpringGreen;", "background-color:black;color:red;"))
 		));
 		return Promise.all(stack);
 	})
@@ -56,6 +54,7 @@ const sw_messageToClients = (action = "cache-atualizado", str = "") => {
 			client.postMessage({
 				action: action,
 				str: str,
+				ver: version
 			})
 		});
 	})
@@ -63,17 +62,17 @@ const sw_messageToClients = (action = "cache-atualizado", str = "") => {
 
 // Ao receber solicitação de sync. Mas falha muito
 // self.addEventListener('sync', ev => {
-// 	console.log(`%cSW:%c SYNC`, "color:green;", "color:yellow;");
+// 	console.log(`%cSW__IN:%c SYNC`, "color:green;", "color:yellow;");
 // 	ev.waitUntil(sw_messageToClients("sync", ev.tag));
 // });
 
 // Comunicação
 self.addEventListener('message', async (ev) => {
 	let msg = ev.data;
-	console.log(`%cSW:%c MESSAGE (WORKER)`, "color:MediumSpringGreen;", "color:MediumOrchid;", msg);
+	console.log(`%cSW__IN:%c MESSAGE (WORKER)`, "color:MediumSpringGreen;", "color:MediumOrchid;", msg);
 	switch (msg.action) {
 		case "cacheUpdate":
-			ev.waitUntil(sw_cacheUpdate(swCacheBase).then(r => {
+			ev.waitUntil(sw_cacheUpdate('sw_v_static_' + version).then(r => {
 				sw_messageToClients("cache-atualizado");
 			}));
 			break;
@@ -82,14 +81,15 @@ self.addEventListener('message', async (ev) => {
 
 // Ao instalar uma nova versão
 self.addEventListener('install', ev => {
-	console.log(`%cSW:%c INSTALL`, "color:MediumSpringGreen;", "color:MediumOrchid;");
-	ev.waitUntil(sw_cacheUpdate(swCacheBase));
+	console.log(`%cSW__IN:%c INSTALLING`, "color:MediumSpringGreen;", "color:MediumOrchid;");
+	ev.waitUntil(sw_cacheUpdate('sw_v_static_' + version));
+	console.log(`%cSW__IN:%c INSTALLED (Auto-Update)`, "color:MediumSpringGreen;", "color:MediumOrchid;");
 	self.skipWaiting();
 });
 
 // Ao ativar nova versão
 self.addEventListener("activate", ev => {
-	console.log(`%cSW:%c ACTIVATE`, "color:MediumSpringGreen;", "color:MediumOrchid;");
+	console.log(`%cSW__IN:%c NOVA VERSÃO ATIVA! (Removendo versões antigas)`, "color:MediumSpringGreen;", "color:MediumOrchid;");
 	// Aqui limpa versoes antigas.
 	// Possivel problema: 2 Abas, usando o mesmo cache,
 	//   mas uma aba avança versão e a outra não.
@@ -97,7 +97,7 @@ self.addEventListener("activate", ev => {
 	ev.waitUntil(caches.keys()
 		.then(versoesCache => {
 			return Promise.all(versoesCache
-				.filter(k => k !== swCacheBase && k !== swCacheNovo)
+				.filter(k => (k !== 'sw_v_static_' + version) && (k !== 'sw_v_found_' + version))
 				.map(k => caches.delete(k))
 			)
 		})
@@ -127,9 +127,9 @@ self.addEventListener("fetch", ev => {
 			caches.match(ev.request).then(cacheRes => {
 				// Always try get
 				const returnNetwork = fetch(ev.request).then((fetchRes) => {
-					return caches.open(swCacheNovo).then(cache => {
+					return caches.open('sw_v_found_' + version).then(cache => {
 						cache.put(ev.request.url, fetchRes.clone());
-						//sw_cacheLimitSize(swCacheNovo, 50);
+						//sw_cacheLimitSize('sw_v_found_' + version, 50);
 						return fetchRes;
 					});
 				});
