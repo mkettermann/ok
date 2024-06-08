@@ -2,7 +2,7 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "_2";
+const version = "0";
 
 // Assets do cache Base:
 const swAssets = [
