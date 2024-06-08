@@ -1,5 +1,5 @@
 /**********************************\\
-//  MK SW - Tools - Offline         \\
+//  MK SW - Tools                   \\
 //__________________________________*/
 
 if ("serviceWorker" in navigator) {
