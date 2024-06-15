@@ -2,7 +2,7 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "1.27";
+const version = "1.33";
 let cacheon = new URL(location.href).searchParams.get("cache");
 if (cacheon == "true") { cacheon = true } else { cacheon = false };
 
@@ -38,7 +38,7 @@ const sw_cacheUpdate = async (nameCache) => {
 	if (!cacheon) {
 		return false;
 	}
-	console.log(`%c<< SW__IN:%c ATUALIZANDO CACHE`, "color:lawngreen;", "color:MediumOrchid;");
+	//console.log(`%c<< SW__IN:%c ATUALIZANDO CACHE`, "color:lawngreen;", "color:MediumOrchid;");
 	caches.open(nameCache).then((cache) => {
 		const stack = [];
 		// ADD ==> Coleta as rotas e guarda.
@@ -55,7 +55,7 @@ const sw_messageToClients = (action = "cache-atualizado", str = "") => {
 		str: str,
 		ver: version
 	}
-	console.log(`%c<< SW__IN:%c >> COMUNICAÇÃO:`, "color:lawngreen;", "color:MediumOrchid;", obj);
+	//console.log(`%c<< SW__IN:%c >> COMUNICAÇÃO:`, "color:lawngreen;", "color:MediumOrchid;", obj);
 	clients.matchAll({
 		includeUncontrolled: false,
 		type: "window",
@@ -74,7 +74,7 @@ const sw_messageToClients = (action = "cache-atualizado", str = "") => {
 // Comunicação
 self.addEventListener('message', async (ev) => {
 	let msg = ev.data;
-	console.log(`%c<< SW__IN:%c << COMUNICAÇÃO:`, "color:lawngreen;", "color:MediumOrchid;", msg);
+	//console.log(`%c<< SW__IN:%c << COMUNICAÇÃO:`, "color:lawngreen;", "color:MediumOrchid;", msg);
 	switch (msg.action) {
 		case "UpdateCache":
 			ev.waitUntil(sw_cacheUpdate('sw_v_static_' + version).then(r => {
