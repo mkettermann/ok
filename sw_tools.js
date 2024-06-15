@@ -21,8 +21,8 @@ class mkSw {
 				config.log = false;
 			}
 			if (config.url == null) {
-				mkSw.workerUrl = new URL(location.origin);
-				mkSw.workerUrl.pathname = "/sw.js"
+				mkSw.workerUrl = new URL(location.href);
+				mkSw.workerUrl.pathname += "sw.js"
 				mkSw.workerUrl.searchParams.set("cache", config.cache);
 				mkSw.workerUrl.searchParams.set("log", config.log);
 				config.url = mkSw.workerUrl.href;
@@ -49,12 +49,10 @@ class mkSw {
 			return null;
 		}
 
-		// LOG INFO
-		mkSw.showInfo("Registro bem sucedido", registro.scope)
-		mkSw.showInfo("Cache Ativo", mkSw.config.cache);
-
 		// GATILHO de UPDATE (Só se executa se o SW for modificado)
 		navigator.serviceWorker.getRegistration().then(reg => {
+			mkSw.showInfo("Registro bem sucedido", registro.scope)
+			mkSw.showInfo("Cache Ativo", mkSw.config.cache);
 
 			if (reg) reg.onupdatefound = (ev) => {
 				const instalacao = reg.installing;
