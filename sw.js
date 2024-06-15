@@ -2,13 +2,14 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "0";
+const version = "1.27";
+let cacheon = new URL(location.href).searchParams.get("cache");
+if (cacheon == "true") { cacheon = true } else { cacheon = false };
 
 // Assets do cache Base:
 const swAssets = [
 	'./',
 	'./index.html',
-	'./offline.js',
 	'./css/bootstrap-icons/font/bootstrap-icons.css',
 	'./css/bootstrap-icons/font/bootstrap-icons.min.css',
 	'./css/bootstrap-icons/font/fonts/bootstrap-icons.woff',
@@ -34,6 +35,9 @@ const swAssets = [
 ];
 
 const sw_cacheUpdate = async (nameCache) => {
+	if (!cacheon) {
+		return false;
+	}
 	console.log(`%c<< SW__IN:%c ATUALIZANDO CACHE`, "color:lawngreen;", "color:MediumOrchid;");
 	caches.open(nameCache).then((cache) => {
 		const stack = [];
@@ -46,17 +50,17 @@ const sw_cacheUpdate = async (nameCache) => {
 };
 
 const sw_messageToClients = (action = "cache-atualizado", str = "") => {
+	let obj = {
+		action: action,
+		str: str,
+		ver: version
+	}
+	console.log(`%c<< SW__IN:%c >> COMUNICAÇÃO:`, "color:lawngreen;", "color:MediumOrchid;", obj);
 	clients.matchAll({
 		includeUncontrolled: false,
 		type: "window",
 	}).then(clients => {
-		clients.forEach(client => {
-			client.postMessage({
-				action: action,
-				str: str,
-				ver: version
-			})
-		});
+		clients.forEach(client => { client.postMessage(obj) });
 	})
 }
 
@@ -70,12 +74,15 @@ const sw_messageToClients = (action = "cache-atualizado", str = "") => {
 // Comunicação
 self.addEventListener('message', async (ev) => {
 	let msg = ev.data;
-	console.log(`%c<< SW__IN:%c << COMUNCAÇÃO:`, "color:lawngreen;", "color:MediumOrchid;", msg);
+	console.log(`%c<< SW__IN:%c << COMUNICAÇÃO:`, "color:lawngreen;", "color:MediumOrchid;", msg);
 	switch (msg.action) {
 		case "UpdateCache":
 			ev.waitUntil(sw_cacheUpdate('sw_v_static_' + version).then(r => {
 				sw_messageToClients("cache-atualizado");
 			}));
+			break;
+		case "Versão":
+			sw_messageToClients("Versão");
 			break;
 	}
 });
