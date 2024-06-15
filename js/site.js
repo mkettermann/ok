@@ -1,5 +1,6 @@
-let arq = null;
+"use strict"
 
+let arq = null;
 let listas = [];
 let keys = [
 	{ k: "mTit", l: "Título", requer: true },
@@ -310,6 +311,15 @@ mkt.Ao("click", "#indexReqUpdate", () => {
 mkt.Ao("click", "#indexRefresh", () => {
 	window.location.reload();
 })
+
+mkSw.start({
+	cache: false,
+	aoAtualizarVersao: (versao) => {
+		// Como Proceder / Informar usuário quando terminou de instalar nova versão
+		if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Nova versão (${versao}). Atualize.`;
+		if (mkt.Q("#indexRefresh")) mkt.QverOn("#indexRefresh");
+	},
+});
 
 /**********************************\\
 //  PERFORMANCE						          \\
