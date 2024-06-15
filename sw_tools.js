@@ -1,61 +1,84 @@
+"use strict"
 /**********************************\\
 //  MK SW - Tools                   \\
 //__________________________________*/
-
-if ("serviceWorker" in navigator) {
-	// Registro do SW
-	navigator.serviceWorker.register("./sw.js").then((reg) => {
-		console.log(`%c>> SW_OUT:%c Registro DONE -> ${reg.scope}`, "color:MediumSpringGreen;", "color:MediumOrchid;");
-	}).catch((err) => {
-		console.log(`%c>> SW_OUT:%c Registro FAIL ->`, "color:MediumSpringGreen;", "color:MediumOrchid;", err);
-	});
-
-	// Verificação da Versão Atual
-	// Primeira vez que entra: acredito que gere um erro por causa do assincrono do .registrar() ainda não concluiu, e aqui já ta dando .getRegistration().
-	navigator.serviceWorker.getRegistration()
-		.then(reg => {
-			reg.addEventListener("updatefound", (ev) => {
-				const swInstall = reg.installing;
-				swInstall.addEventListener("statechange", () => {
-					if (swInstall.state == "installed") { // installed / activating / activated
-						// Nova Versão Instalada (Informar usuário)
-						console.log(`%c>> SW_OUT:%c Nova versão instalada.`, "color:MediumSpringGreen;", "color:MediumOrchid;");
-
-						// ---
-						if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = "Nova versão encontrada. Atualize.";
-						if (mkt.Q("#indexRefresh")) mkt.QverOn("#indexRefresh");
-						// ---
-
-					} else {
-						console.log(`%c>> SW_OUT:%c Estado da versão: ${swInstall.state}`, "color:MediumSpringGreen;", "color:MediumOrchid;");
-					}
-				})
-			})
-		}).catch(err => {
-			console.log(`%c>> SW_OUT:%c Falhou em obter a versão atual:`, "color:MediumSpringGreen;", "color:MediumOrchid;", err);
-		});
-
-	// COMUNICAÇÃO
-	navigator.serviceWorker.addEventListener("message", ev => {
-		switch (ev.data.action) {
-			case "cache-atualizado":
-				console.log(`%c>> SW_OUT:%c Dados Atualizados. Versão: ${ev.data.ver}`, "color:MediumSpringGreen;", "color:MediumOrchid;");
-
-				// ---
-				if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = "Cache Atualizado. Ver: " + ev.data.ver;
-				// ---
-
-				break;
-			case "sync":
-				console.log(`%c>> SW_OUT:%c INFO SINCRONIZADO. Versão: ${ev.data.ver}`, "color:MediumSpringGreen;", "color:MediumOrchid;");
-				break;
-		}
-	})
-} else {
-	console.log(`%c>> SW_OUT:%c Sem suporte a Service Worker (Verificar HTTPS).`, "color:MediumSpringGreen;", "color:MediumOrchid;");
-}
+// Versionamento, Cacheamento, PWA
 
 class mkSw {
+	// Registra e vincula a função de cada evento
+	static start = async (config) => {
+		if (typeof config == "object") {
+			if (config.cache == true) {
+				config.cache = true;
+			}
+			if (config.url == null) {
+				config.url = "/sw.js?cache=" + config.cache;
+			}
+			if (config.aoAtualizarVersao != null) {
+				mkSw.aoAtualizarVersao = config.aoAtualizarVersao;
+			}
+		}
+		// Não iniciar quando indisponúvel
+		if (!("serviceWorker" in navigator)) {
+			mkSw.showError("Sem suporte a Service Worker (Verificar HTTPS)", "")
+			return null;
+		}
+
+		// Registrar do SW
+		await navigator.serviceWorker.register(config.url).catch((err) => mkSw.showError("Register", err));
+
+		// Valida Registro
+		let asyncRegistro = navigator.serviceWorker.getRegistration();
+		asyncRegistro.catch((err) => mkSw.showError("GET Registro", err));
+		let registro = await asyncRegistro;
+		if (registro == null) {
+			mkSw.showError("Registro Nulo", "Falhou em obter a versão atual");
+			return null;
+		}
+		mkSw.showInfo("Registro bem sucedido", registro.scope)
+		mkSw.showInfo("Cache Ativo", config.cache);
+		// GATILHO de UPDATE (Só se executa se o SW for modificado)
+		registro.addEventListener("updatefound", (ev) => {
+			const instalacao = registro.installing;
+			instalacao?.addEventListener("statechange", () => {
+				if (instalacao.state == "installed") { // installed / activating / activated
+					// Nova Versão Instalada (Informar usuário)
+					mkSw.showInfo("Concluida nova instalação do SW (por byte) (Solicitando versão)");
+					mkSw.sendMessageToSW({ action: "Versão" })
+				}
+				//mkSw.showInfo("Versão", swInstall.state);
+			})
+		})
+
+		// GATILHO de COMUNICAÇÃO
+		navigator.serviceWorker.addEventListener("message", ev => {
+			switch (ev.data.action) {
+				case "cache-atualizado":
+					console.log(`%c>> SW_OUT:%c Dados Atualizados. Versão: ${ev.data.ver}`, "color:MediumSpringGreen;", "color:MediumOrchid;");
+					break;
+				case "Versão":
+					mkSw.showInfo("Versão", ev.data.ver);
+					mkSw.aoAtualizarVersao(ev.data.ver);
+					break;
+				case "sync":
+					console.log(`%c>> SW_OUT:%c INFO SINCRONIZADO. Versão: ${ev.data.ver}`, "color:MediumSpringGreen;", "color:MediumOrchid;");
+					break;
+			}
+		})
+	}
+
+	static showError = (msg, erro) => {
+		console.log(`%c>> %cSW_ERRO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
+	}
+
+	static showInfo = (msg, data) => {
+		console.log(`%c>> %cSW_INFO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0005;color:green;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", data);
+	}
+
+	static aoAtualizarVersao = (versao) => {
+		console.log(versao);
+	}
+
 	// Atualizar no SW.
 	static getUpdate = () => {
 		console.log(`%c>> SW_OUT:%c >> Solicitando Update...`, "color:MediumSpringGreen;", "color:MediumOrchid;");
@@ -72,7 +95,7 @@ class mkSw {
 	}
 	// Message To SW. Via Controller
 	static sendMessageToSW = (message) => {
-		console.log(`%c>> SW_OUT:%c >> Comunicação:`, "color:MediumSpringGreen;", "color:MediumOrchid;", message);
+		console.log(`%c>> SW_OUT:%c >> COMUNICAÇÃO:`, "color:MediumSpringGreen;", "color:MediumOrchid;", message);
 		if (navigator.serviceWorker.controller) {
 			navigator.serviceWorker.controller.postMessage(message)
 		} else {
