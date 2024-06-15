@@ -50,7 +50,7 @@ class mkSw {
 		}
 
 		// GATILHO de UPDATE (Só se executa se o SW for modificado)
-		registro.then(reg => {
+		navigator.serviceWorker.getRegistration().then(reg => {
 			mkSw.showInfo("Registro bem sucedido", registro.scope)
 			mkSw.showInfo("Cache Ativo", mkSw.config.cache);
 
