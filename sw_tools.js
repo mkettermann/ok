@@ -45,12 +45,12 @@ class mkSw {
 		// Valida Registro
 		// let registro = await navigator.serviceWorker.getRegistration().catch((err) => mkSw.showError("GET Registro", err));
 		if (registro == null) {
-			mkSw.showError("Registro Nulo", "Falhou em obter a versão atual");
+			mkSw.showError("Falhou em obter a versão atual", registro);
 			return null;
 		}
 
 		// GATILHO de UPDATE (Só se executa se o SW for modificado)
-		navigator.serviceWorker.getRegistration().then(reg => {
+		registro.then(reg => {
 			mkSw.showInfo("Registro bem sucedido", registro.scope)
 			mkSw.showInfo("Cache Ativo", mkSw.config.cache);
 
@@ -66,7 +66,7 @@ class mkSw {
 
 			};
 
-		}).catch(err => { mkSw.showError("Falhou em obter a versão atual", err) })
+		}).catch(err => { mkSw.showError("Falhou", err) })
 
 		// GATILHO de COMUNICAÇÃO
 		navigator.serviceWorker.addEventListener("message", ev => {
