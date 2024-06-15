@@ -306,14 +306,14 @@ mkt.Ao("click", "#returnOnSync", () => {
 	mkSw.returnTagOnSync("SincronizarAgora");
 })
 mkt.Ao("click", "#indexReqUpdate", () => {
-	mkSw.requestCacheUpdate();
+	mkSw.requestUpdate();
 })
 mkt.Ao("click", "#indexRefresh", () => {
 	window.location.reload();
 })
 
 mkSw.start({
-	cache: false,
+	cache: true,
 	quiet: false,
 	aoAtualizarVersao: (versao) => {
 		// Como Proceder / Informar usuário quando terminou de instalar nova versão
