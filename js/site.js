@@ -314,9 +314,10 @@ mkt.Ao("click", "#indexRefresh", () => {
 
 mkSw.start({
 	cache: false,
+	quiet: false,
 	aoAtualizarVersao: (versao) => {
 		// Como Proceder / Informar usuário quando terminou de instalar nova versão
-		if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Nova versão (${versao}). Atualize.`;
+		if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Nova versão (Atual: ${versao}). Atualize.`;
 		if (mkt.Q("#indexRefresh")) mkt.QverOn("#indexRefresh");
 	},
 });
