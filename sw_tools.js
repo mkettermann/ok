@@ -5,7 +5,9 @@
 // Versionamento, Cacheamento, PWA
 
 class mkSw {
-	config = null;
+	static config = null;
+	static workerUrl = "";
+	static updateConcluido = null;
 
 	// Registra e vincula a função de cada evento
 	static start = async (config) => {
@@ -13,17 +15,22 @@ class mkSw {
 			if (config.cache != true) {
 				config.cache = false;
 			}
-			if (config.url == null) {
-				config.url = "/sw.js?cache=" + config.cache;
-			}
 			if (config.quiet == false) {
 				config.log = true;
 			} else {
 				config.log = false;
 			}
+			if (config.url == null) {
+				mkSw.workerUrl = new URL(location.origin);
+				mkSw.workerUrl.pathname = "/sw.js"
+				mkSw.workerUrl.searchParams.set("cache", config.cache);
+				mkSw.workerUrl.searchParams.set("log", config.log);
+				config.url = mkSw.workerUrl.href;
+			}
 			if (config.aoAtualizarVersao != null) {
 				mkSw.aoAtualizarVersao = config.aoAtualizarVersao;
 			}
+			config.versao = mkSw._getVersaoAtual();
 		}
 		mkSw.config = config;
 		// Não iniciar quando indisponível
@@ -33,47 +40,53 @@ class mkSw {
 		}
 
 		// Registrar do SW
-		await navigator.serviceWorker.register(mkSw.config.url).catch((err) => mkSw.showError("Register", err));
+		let registro = await navigator.serviceWorker.register(mkSw.workerUrl.href).catch((err) => mkSw.showError("Register", err));
 
 		// Valida Registro
-		let asyncRegistro = navigator.serviceWorker.getRegistration();
-		asyncRegistro.catch((err) => mkSw.showError("GET Registro", err));
-		let registro = await asyncRegistro;
+		// let registro = await navigator.serviceWorker.getRegistration().catch((err) => mkSw.showError("GET Registro", err));
 		if (registro == null) {
 			mkSw.showError("Registro Nulo", "Falhou em obter a versão atual");
 			return null;
 		}
 
 		// LOG INFO
-		if (mkSw.config.log) mkSw.showInfo("Registro bem sucedido", registro.scope)
-		if (mkSw.config.log) mkSw.showInfo("Cache Ativo", mkSw.config.cache);
+		mkSw.showInfo("Registro bem sucedido", registro.scope)
+		mkSw.showInfo("Cache Ativo", mkSw.config.cache);
 
 		// GATILHO de UPDATE (Só se executa se o SW for modificado)
-		registro.addEventListener("updatefound", (ev) => {
-			const instalacao = registro.installing;
-			instalacao?.addEventListener("statechange", () => {
-				if (instalacao.state == "installed") { // installed / activating / activated
-					// Nova Versão Instalada (Informar usuário)
-					if (mkSw.config.log) mkSw.showInfo("Concluida nova instalação do SW (por byte) (Solicitando versão)", instalacao.state);
-					mkSw.sendMessageToSW({ action: "Versão" })
-				}
-				if (mkSw.config.log) mkSw.showInfo("Estado da instalação: ", instalacao.state);
-			})
-		})
+		navigator.serviceWorker.getRegistration().then(reg => {
+
+			if (reg) reg.onupdatefound = (ev) => {
+				const instalacao = reg.installing;
+
+				if (instalacao) instalacao.onstatechange = () => {
+					mkSw.showInfo("Estado da instalação: ", instalacao.state);
+					if (instalacao.state == "installed") { // installed / activating / activated
+						mkSw.skipWaiting();
+					}
+				};
+
+			};
+
+		}).catch(err => { mkSw.showError("Falhou em obter a versão atual", err) })
 
 		// GATILHO de COMUNICAÇÃO
 		navigator.serviceWorker.addEventListener("message", ev => {
-			if (mkSw.config.log) mkSw.showInfo("<< COMUNICAÇÃO", ev.data);
+			mkSw.showInfo("<< COMUNICAÇÃO", ev.data);
 			switch (ev.data.action) {
-				case "cache-atualizado":
-					if (mkSw.config.log) mkSw.showInfo("Dados Atualizados", ev.data.ver);
+				case "UpdateFull":
+					mkSw.showInfo("Update Concluído", ev.data.ver);
+					mkSw.updateConcluido = ev.data.ver;
 					break;
 				case "Versão":
-					if (mkSw.config.log) mkSw.showInfo("Versão", ev.data.ver);
-					mkSw.aoAtualizarVersao(ev.data.ver);
+					if (ev.data.ver != mkSw._getVersaoAtual()) {
+						mkSw.showInfo(`Versão MUDOU:`, [mkSw._getVersaoAtual(), ev.data.ver]);
+						mkSw._setVersaoAtual(ev.data.ver);
+						mkSw.aoAtualizarVersao(ev.data.ver);
+					}
 					break;
 				case "sync":
-					if (mkSw.config.log) mkSw.showInfo("Sincronizado", ev.data.ver);
+					mkSw.showInfo("Sincronizado", ev.data.ver);
 					break;
 			}
 		})
@@ -81,56 +94,79 @@ class mkSw {
 		return mkSw.config;
 	}
 
+	// Out of Worker
 	static showError = (msg, erro) => {
-		console.log(`%c>> %cSW_ERRO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
+		console.log(`%cO> %cSW_ERRO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
 	}
 
+	// Out of Worker
 	static showInfo = (msg, data) => {
-		console.log(`%c>> %cSW_INFO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0005;color:green;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", data);
+		console.log(`%cO> %cSW_INFO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0005;color:green;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", data);
 	}
 
 	static aoAtualizarVersao = (versao) => {
-		if (mkSw.config.log) mkSw.showInfo("fn aoAtualizarVersao recebeu: ", versao);
+		mkSw.showInfo("fn aoAtualizarVersao recebeu: ", versao);
 	}
 
 	// Atualizar no SW.
 	static getUpdate = () => {
-		if (mkSw.config.log) mkSw.showInfo("Solicitando Update de Versão...", ev.data.ver);
-		navigator.serviceWorker?.getRegistration().then(reg => {
-			reg.update();
-		});
+		return new Promise((r, re) => {
+			mkSw.showInfo("Solicitando Update de Versão...");
+			navigator.serviceWorker?.getRegistration().then(reg => {
+				reg.update();
+				r();
+			}).catch(erro => {
+				re(erro);
+			});
+		})
+	}
+	// Solicita Versao.
+	static getVersao = () => {
+		if (!mkSw.sendMessageToSW({ action: "Versão" })) {
+			re("Falha de comunicação");
+		}
 	}
 	// Desregistrar no SW.
 	static del = () => {
-		if (mkSw.config.log) mkSw.showInfo("Desregistrando Serviço...", ev.data.ver);
+		mkSw.showInfo("Desregistrando Serviço...");
 		navigator.serviceWorker?.getRegistration().then(reg => {
 			reg.unregister().then(r => {
-				if (mkSw.config.log) mkSw.showInfo("SW Desregistrado.", ev.data.ver);
+				mkSw.showInfo("SW Desregistrado.");
 			});
 		});
 	}
 	// Message To SW. Via Controller
 	static sendMessageToSW = (message) => {
-		if (mkSw.config.log) mkSw.showInfo(">> COMUNICAÇÃO", message);
+		mkSw.showInfo(">> COMUNICAÇÃO", message);
 		if (navigator.serviceWorker.controller) {
 			navigator.serviceWorker.controller.postMessage(message)
+			return true;
 		} else {
-			if (mkSw.config.log) mkSw.showError("Sem controller para enviar mensagem.", navigator.serviceWorker.controller);
+			mkSw.showError("Sem controller para enviar mensagem.", navigator.serviceWorker.controller);
+			return false;
 		}
 	}
 	// Update All Clients via Message
-	static requestCacheUpdate = () => {
-		mkSw.sendMessageToSW({
-			action: "UpdateCache"
-		})
+	static requestUpdate = async () => {
+		await mkSw.getUpdate().catch(ree => { re(ree) });
+		if (!mkSw.sendMessageToSW({
+			action: "UpdateFull"
+		})) {
+			re("Falha de comunicação");
+		}
 	}
-	// Registrar pra Sincronizar
-	// static returnTagOnSync = (tag) => {
-	// 	if ("SyncManager" in window) {
-	// 		mkt.l("%c>> Sending to Sync SW:", "color:gold;", tag);
-	// 		navigator.serviceWorker?.getRegistration().then(reg => {
-	// 			reg.sync.register(tag);
-	// 		});
-	// 	}
-	// }
+
+	// Update All Clients via Message
+	static skipWaiting = async () => {
+		(await navigator.serviceWorker?.getRegistration()).waiting.postMessage({ action: "skipWaiting" })
+	}
+
+	static _getVersaoAtual = () => {
+		if (!localStorage.sw_VersaoAtual) localStorage.sw_VersaoAtual = "0.0";
+		return localStorage.sw_VersaoAtual;
+	};
+
+	static _setVersaoAtual = (versao) => {
+		localStorage.sw_VersaoAtual = versao;
+	};
 }
