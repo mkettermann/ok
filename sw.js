@@ -2,11 +2,14 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "1.78";
+const version = "1.79";
 let cacheon = new URL(location.href).searchParams.get("cache");
 if (cacheon == "true") { cacheon = true } else { cacheon = false };
 let log = new URL(location.href).searchParams.get("log");
 if (log == null) { log = 1; }
+let p = new URL(location.href).searchParams.get("p");
+if (p == null) { p = 0; } else { p = Number(p) }
+const cacheName = "sw_v_static_" + version;
 
 // Assets do cache Base:
 const swAssets = [
@@ -121,39 +124,68 @@ self.addEventListener("activate", ev => {
 
 })
 
-// Proxy
+// POLÍTICAS SW PROXY
 self.addEventListener("fetch", ev => {
-	// Aqui é possível alterar entre as políticas baseado na url do fetch.
+	switch (p) {
+		case 0:
+			// 0 - Stale-While-Revalidate
+			ev.respondWith(
+				caches.open(cacheName).then((cache) => {
+					cache.match(ev.request).then((cacheResponse) => {
+						fetch(ev.request).then((networkResponse) => {
+							cache.put(ev.request, networkResponse)
+						})
+						return cacheResponse || networkResponse;
+					})
+				})
+			)
+			break;
 
-	// SE online, NetWork First, SE offline, Cache First.
-	if (navigator.onLine) {
-		// Network-First. All Online
-		ev.respondWith(
-			fetch(ev.request)
-				.catch(err => {
-					// Se Network Falhar, retorna o Cache.
+		case 1:
+			// 1 - Cache first, then Network
+			ev.respondWith(
+				caches.open(cacheName).then((cache) => {
+					cache.match(ev.request).then((cacheResponse) => {
+						if (cacheResponse) {
+							return cacheResponse;
+						} else {
+							return fetch(ev.request).then((networkResponse) => {
+								cache.put(ev.request, networkResponse.clone())
+								return networkResponse;
+							})
+						}
+					})
+				})
+			)
+			break;
+
+		case 2:
+			// 2 - Network first, then Cache
+			ev.respondWith(
+				fetch(ev.request).catch(() => { // Só retorna cache se deu erro no fetch
 					return caches.match(ev.request);
 				})
-		);
-	} else {
-		// Cache-First. All Cache First
-		ev.respondWith(
-			// Mesma URL = Offline Cache.
-			caches.match(ev.request).then(cacheRes => {
-				// Always try get
-				const returnNetwork = fetch(ev.request).then((fetchRes) => {
-					return caches.open('sw_v_found_' + version).then(cache => {
-						cache.put(ev.request.url, fetchRes.clone());
-						//sw_cacheLimitSize('sw_v_found_' + version, 50);
-						return fetchRes;
-					});
-				});
-				return cacheRes || returnNetwork;
-			}).catch(() => {
-				if (ev.request.url.indexOf('.html') > -1) {
-					return caches.match(swAssets[1]);
-				}
-			})
-		);
+			);
+			break;
+
+		case 3:
+			// 3 - Cache only
+			ev.respondWith(
+				caches.open(cacheName).then((cache) => {
+					cache.match(ev.request).then((cacheResponse) => {
+						return cacheResponse;
+					})
+				})
+			)
+			break;
+
+		case 4:
+			// 4 - Network only
+			ev.respondWith(
+				fetch(ev.request).then((networkResponse) => {
+					return networkResponse;
+				})
+			)
+			break;
 	}
 })
