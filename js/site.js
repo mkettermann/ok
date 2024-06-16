@@ -321,7 +321,11 @@ mkSw.start({
 		if (mkt.Q("#indexRefresh")) mkt.QverOn("#indexRefresh");
 	},
 }).then(r => {
-	mkt.Q(".areaLogo").insertAdjacentHTML("beforeEnd", `${r.versao}`);
+	if (r == null) {
+		mkt.Q(".areaLogo").insertAdjacentHTML("beforeEnd", `---`);
+	} else {
+		mkt.Q(".areaLogo").insertAdjacentHTML("beforeEnd", `${r.versao}`);
+	}
 });
 
 /**********************************\\
