@@ -13,8 +13,8 @@ class mkSw {
 	static start = async (config) => {
 		mkSw.config = config;
 		if (typeof mkSw.config == "object") {
-			if (mkSw.config.cache != true) {
-				mkSw.config.cache = false;
+			if (mkSw.config.cache != false) {
+				mkSw.config.cache = true;
 			}
 			if (mkSw.config.log != null) {
 				mkSw.config.log = mkSw.config.log;
