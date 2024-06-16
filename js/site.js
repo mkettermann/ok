@@ -307,7 +307,8 @@ mkt.Ao("click", "#returnOnSync", () => {
 })
 mkt.Ao("click", "#indexReqUpdate", () => {
 	mkSw.requestUpdate().then(r => {
-		if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Atualizado. v${r}`;
+		mkt.Q("#swOutputInfo").innerHTML = `Atualizado. v${r}`;
+		mkt.Q("#pwaversao").innerHTML = r;
 	});
 })
 mkt.Ao("click", "#indexRefresh", () => {
@@ -322,9 +323,9 @@ mkSw.start({
 	},
 }).then(r => {
 	if (r == null) {
-		mkt.Q(".areaLogo").insertAdjacentHTML("beforeEnd", `---`);
+		mkt.Q("#pwaversao").innerHTML = "---";
 	} else {
-		mkt.Q(".areaLogo").insertAdjacentHTML("beforeEnd", `${r.versao}`);
+		mkt.Q("#pwaversao").innerHTML = r.versao;
 	}
 });
 
