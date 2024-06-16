@@ -2,7 +2,7 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "1.68";
+const version = "1.69";
 let cacheon = new URL(location.href).searchParams.get("cache");
 if (cacheon == "true") { cacheon = true } else { cacheon = false };
 let log = new URL(location.href).searchParams.get("log");
