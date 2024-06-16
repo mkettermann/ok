@@ -306,20 +306,22 @@ mkt.Ao("click", "#returnOnSync", () => {
 	mkSw.returnTagOnSync("SincronizarAgora");
 })
 mkt.Ao("click", "#indexReqUpdate", () => {
-	mkSw.requestUpdate();
+	mkSw.requestUpdate().then(r => {
+		if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Atualizado. v${r}`;
+	});
 })
 mkt.Ao("click", "#indexRefresh", () => {
 	window.location.reload();
 })
 
 mkSw.start({
-	cache: true,
-	quiet: false,
 	aoAtualizarVersao: (vAtual, vAnterior) => {
 		// Como Proceder / Informar usuário quando terminou de instalar nova versão
 		if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Nova versão: ${vAtual} (Estava: ${vAnterior}). Atualize.`;
 		if (mkt.Q("#indexRefresh")) mkt.QverOn("#indexRefresh");
 	},
+}).then(r => {
+	mkt.Q(".areaLogo").insertAdjacentHTML("beforeEnd", `${r.versao}`);
 });
 
 /**********************************\\
