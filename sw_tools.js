@@ -158,19 +158,22 @@ class mkSw {
 		mkSw.updateConcluido = null;
 		let c = 0;
 		await mkSw.getUpdate().catch(ree => { re(ree) });
-		mkSw.sendMessageToSW({ action: "UpdateFull" });
+		if (!mkSw.sendMessageToSW({ action: "UpdateFull" })) {
+			re("Erro de Comunicação");
+		};
 		return new Promise((r, re) => {
 			let esperandoRespostaUpdate = () => {
+				mkSw.showInfo("Registro bem sucedido", c, 4)
 				if (mkSw.updateConcluido != null) {
 					r(mkSw.updateConcluido);
 				} else {
-					if (c > 100) {
+					if (c > 1000) {
 						re("Timeout");
 					} else {
 						setTimeout(() => {
 							c++;
 							esperandoRespostaUpdate();
-						}, 10);
+						}, 100);
 					}
 				}
 			}
