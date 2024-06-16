@@ -158,24 +158,24 @@ const lerTexto = async (arq) => {
 	});
 };
 
-const aoAlterarInputImport = async (ev) => {
-	let arqs = ev.target.files;
-	if (arqs.length > 0) {
-		let conteudo = await lerTexto(arqs[0]);
-		splitado = conteudo.split("█");
-		let dados = [];
-		for (var i = 0; i < splitado.length - 1; i = i + 5) {
-			dados.push({
-				mCod: splitado[i],
-				mTit: splitado[i + 1],
-				mTit2: splitado[i + 2],
-				mDat: splitado[i + 3],
-				mDes: splitado[i + 4],
-			});
-		}
-		aoReceberConteudo(dados);
-	}
-};
+// const aoAlterarInputImport = async (ev) => {
+// 	let arqs = ev.target.files;
+// 	if (arqs.length > 0) {
+// 		let conteudo = await lerTexto(arqs[0]);
+// 		splitado = conteudo.split("█");
+// 		let dados = [];
+// 		for (var i = 0; i < splitado.length - 1; i = i + 5) {
+// 			dados.push({
+// 				mCod: splitado[i],
+// 				mTit: splitado[i + 1],
+// 				mTit2: splitado[i + 2],
+// 				mDat: splitado[i + 3],
+// 				mDes: splitado[i + 4],
+// 			});
+// 		}
+// 		aoReceberConteudo(dados);
+// 	}
+// };
 
 const aoAlterarInput = async (ev) => {
 	let arqs = ev.target.files;
