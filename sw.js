@@ -2,11 +2,11 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "1.70";
+const version = "1.73";
 let cacheon = new URL(location.href).searchParams.get("cache");
 if (cacheon == "true") { cacheon = true } else { cacheon = false };
 let log = new URL(location.href).searchParams.get("log");
-if (log == "true") { log = true } else { log = false };
+if (log == null) { log = 1; }
 
 // Assets do cache Base:
 const swAssets = [
@@ -38,12 +38,12 @@ const swAssets = [
 
 // Inside of Worker
 const showError = (msg, erro) => {
-	if (log) console.log(`%cI> %cSW_ERRO: %c${msg}%c ->`, "color:lawngreen;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
+	if (log >= 3) console.log(`%cI> %cSW_ERRO: %c${msg}%c ->`, "color:lawngreen;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
 }
 
 // Inside of Worker
 const showInfo = (msg, data) => {
-	if (log) console.log(`%cI> %cSW_INFO: %c${msg}%c ->`, "color:lawngreen;", "color:MediumSpringGreen;", "background:#0005;color:green;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", data);
+	if (log >= 3) console.log(`%cI> %cSW_INFO: %c${msg}%c ->`, "color:lawngreen;", "color:MediumSpringGreen;", "background:#0005;color:green;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", data);
 }
 
 const sw_cacheUpdate = async (nameCache) => {
