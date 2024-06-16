@@ -2,13 +2,11 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "1.79";
-let cacheon = new URL(location.href).searchParams.get("cache");
-if (cacheon == "true") { cacheon = true } else { cacheon = false };
+const version = "1.81";
 let log = new URL(location.href).searchParams.get("log");
 if (log == null) { log = 1; }
 let p = new URL(location.href).searchParams.get("p");
-if (p == null) { p = 0; } else { p = Number(p) }
+if (p == null) { p = 0; } else { p = Number(p); }
 const cacheName = "sw_v_static_" + version;
 
 // Assets do cache Base:
@@ -50,9 +48,6 @@ const showInfo = (msg, data) => {
 }
 
 const sw_cacheUpdate = async (nameCache) => {
-	if (!cacheon) {
-		return;
-	}
 	showInfo("Atualizando Cache...", nameCache);
 	caches.open(nameCache).then((cache) => {
 		const stack = [];
@@ -126,66 +121,92 @@ self.addEventListener("activate", ev => {
 
 // POLÍTICAS SW PROXY
 self.addEventListener("fetch", ev => {
-	switch (p) {
-		case 0:
-			// 0 - Stale-While-Revalidate
-			ev.respondWith(
-				caches.open(cacheName).then((cache) => {
-					cache.match(ev.request).then((cacheResponse) => {
-						fetch(ev.request).then((networkResponse) => {
-							cache.put(ev.request, networkResponse)
-						})
-						return cacheResponse || networkResponse;
-					})
-				})
-			)
-			break;
-
-		case 1:
-			// 1 - Cache first, then Network
-			ev.respondWith(
-				caches.open(cacheName).then((cache) => {
-					cache.match(ev.request).then((cacheResponse) => {
-						if (cacheResponse) {
-							return cacheResponse;
-						} else {
+	let url = new URL(ev.request.url);
+	let checkUrl = url.origin + url.pathname;
+	if (url.origin == location.origin) {
+		checkUrl = url.pathname; // Apenas Path dos assets
+	}
+	// Verifica Path dos Assets
+	if (!swAssets.includes(checkUrl)) {
+		ev.respondWith(fetch(ev.request));
+	} else {
+		console.log("Politica", p);
+		console.log("Url", ev.request.url);
+		switch (p) {
+			case 0:
+				// 0 - Stale-While-Revalidate
+				ev.respondWith(
+					caches.open(cacheName).then((cache) => {
+						cache.match(checkUrl).then(async (inCache) => {
+							if (inCache) {
+								return inCache;
+							} else {
+								return fetch(ev.request).then(networkResponse => {
+									cache.put(checkUrl, networkResponse.clone());
+								});
+							}
+						}).catch(err => {
+							console.log("Erro oo encontrar o cache", err);
 							return fetch(ev.request).then((networkResponse) => {
 								cache.put(ev.request, networkResponse.clone())
-								return networkResponse;
 							})
-						}
+						})
+					}).catch(err => {
+						console.log("Erro oo abrir o cache", err);
+						return fetch(ev.request).then((networkResponse) => {
+							cache.put(ev.request, networkResponse.clone())
+						})
 					})
-				})
-			)
-			break;
+				)
+				break;
 
-		case 2:
-			// 2 - Network first, then Cache
-			ev.respondWith(
-				fetch(ev.request).catch(() => { // Só retorna cache se deu erro no fetch
-					return caches.match(ev.request);
-				})
-			);
-			break;
-
-		case 3:
-			// 3 - Cache only
-			ev.respondWith(
-				caches.open(cacheName).then((cache) => {
-					cache.match(ev.request).then((cacheResponse) => {
-						return cacheResponse;
+			case 1:
+				// 1 - Cache first, then Network
+				ev.respondWith(
+					caches.open(cacheName).then((cache) => {
+						cache.match(ev.request).then((cacheResponse) => {
+							if (cacheResponse) {
+								return cacheResponse;
+							} else {
+								return fetch(ev.request).then((networkResponse) => {
+									cache.put(ev.request, networkResponse.clone())
+									return networkResponse;
+								})
+							}
+						})
 					})
-				})
-			)
-			break;
+				)
+				break;
 
-		case 4:
-			// 4 - Network only
-			ev.respondWith(
-				fetch(ev.request).then((networkResponse) => {
-					return networkResponse;
-				})
-			)
-			break;
+			case 2:
+				// 2 - Network first, then Cache
+				ev.respondWith(
+					fetch(ev.request).catch(() => { // Só retorna cache se deu erro no fetch
+						return caches.match(ev.request);
+					})
+				);
+				break;
+
+			case 3:
+				// 3 - Cache only
+				ev.respondWith(
+					caches.open(cacheName).then((cache) => {
+						cache.match(ev.request).then((cacheResponse) => {
+							return cacheResponse;
+						})
+					})
+				)
+				break;
+
+			case 4:
+				// 4 - Network only
+				ev.respondWith(
+					fetch(ev.request).then((networkResponse) => {
+						return networkResponse;
+					})
+				)
+				break;
+		}
 	}
+
 })
