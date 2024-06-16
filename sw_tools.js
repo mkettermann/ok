@@ -78,9 +78,10 @@ class mkSw {
 					break;
 				case "Versão":
 					if (ev.data.ver != mkSw._getVersaoAtual()) {
-						mkSw.showInfo(`Versão MUDOU:`, [mkSw._getVersaoAtual(), ev.data.ver]);
+						let listaVersoes = [mkSw._getVersaoAtual(), ev.data.ver];
+						mkSw.showInfo(`Versão MUDOU:`, listaVersoes);
 						mkSw._setVersaoAtual(ev.data.ver);
-						mkSw.aoAtualizarVersao(ev.data.ver);
+						mkSw.aoAtualizarVersao(listaVersoes[1], listaVersoes[0]);
 					}
 					break;
 				case "sync":
