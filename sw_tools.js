@@ -15,10 +15,10 @@ class mkSw {
 			if (config.cache != true) {
 				config.cache = false;
 			}
-			if (config.quiet == false) {
-				config.log = true;
+			if (config.log != null) {
+				config.log = config.log;
 			} else {
-				config.log = false;
+				config.log = 1;
 			}
 			if (config.url == null) {
 				mkSw.workerUrl = new URL(location.href);
@@ -51,7 +51,8 @@ class mkSw {
 
 		// GATILHO de UPDATE (Só se executa se o SW for modificado)
 		navigator.serviceWorker.getRegistration().then(reg => {
-			mkSw.showInfo("Registro bem sucedido", registro.scope)
+			mkSw.showInfo("Registro bem sucedido", registro.scope, 1)
+			mkSw.showInfo("Log Level", mkSw.config.log);
 			mkSw.showInfo("Cache Ativo", mkSw.config.cache);
 
 			if (reg) reg.onupdatefound = (ev) => {
@@ -94,13 +95,13 @@ class mkSw {
 	}
 
 	// Out of Worker
-	static showError = (msg, erro) => {
-		console.log(`%cO> %cSW_ERRO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
+	static showError = (msg, erro, nivel = 2) => {
+		if (mkSw.config.log >= nivel) console.log(`%cO> %cSW_ERRO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
 	}
 
 	// Out of Worker
-	static showInfo = (msg, data) => {
-		console.log(`%cO> %cSW_INFO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0005;color:green;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", data);
+	static showInfo = (msg, data, nivel = 2) => {
+		if (mkSw.config.log >= nivel) console.log(`%cO> %cSW_INFO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0005;color:green;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", data);
 	}
 
 	static aoAtualizarVersao = (versao) => {
@@ -147,12 +148,27 @@ class mkSw {
 	}
 	// Update All Clients via Message
 	static requestUpdate = async () => {
+		mkSw.updateConcluido = null;
+		let c = 0;
 		await mkSw.getUpdate().catch(ree => { re(ree) });
-		if (!mkSw.sendMessageToSW({
-			action: "UpdateFull"
-		})) {
-			re("Falha de comunicação");
-		}
+		mkSw.sendMessageToSW({ action: "UpdateFull" });
+		return new Promise((r, re) => {
+			let esperandoRespostaUpdate = () => {
+				if (mkSw.updateConcluido != null) {
+					r(mkSw.updateConcluido);
+				} else {
+					if (c > 100) {
+						re("Timeout");
+					} else {
+						setTimeout(() => {
+							c++;
+							esperandoRespostaUpdate();
+						}, 10);
+					}
+				}
+			}
+			esperandoRespostaUpdate();
+		});
 	}
 
 	// Update All Clients via Message
