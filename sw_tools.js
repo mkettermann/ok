@@ -11,28 +11,35 @@ class mkSw {
 
 	// Registra e vincula a função de cada evento
 	static start = async (config) => {
-		if (typeof config == "object") {
-			if (config.cache != true) {
-				config.cache = false;
-			}
-			if (config.log != null) {
-				config.log = config.log;
-			} else {
-				config.log = 1;
-			}
-			if (config.url == null) {
-				mkSw.workerUrl = new URL(location.href);
-				mkSw.workerUrl.pathname += "sw.js"
-				mkSw.workerUrl.searchParams.set("cache", config.cache);
-				mkSw.workerUrl.searchParams.set("log", config.log);
-				config.url = mkSw.workerUrl.href;
-			}
-			if (config.aoAtualizarVersao != null) {
-				mkSw.aoAtualizarVersao = config.aoAtualizarVersao;
-			}
-			config.versao = mkSw._getVersaoAtual();
-		}
 		mkSw.config = config;
+		if (typeof mkSw.config == "object") {
+			if (mkSw.config.cache != true) {
+				mkSw.config.cache = false;
+			}
+			if (mkSw.config.log != null) {
+				mkSw.config.log = mkSw.config.log;
+			} else {
+				mkSw.config.log = 1;
+			}
+			if (mkSw.config.url == null) {
+				let url_path = location.pathname;
+				let liof = url_path.lastIndexOf("/");
+				if (liof >= 0) {
+					url_path = location.pathname.slice(0, liof);
+				}
+				let fullUrl = location.origin + url_path;
+				mkSw.showInfo("Full Url", fullUrl, 1)
+				mkSw.workerUrl = new URL(fullUrl);
+				mkSw.workerUrl.pathname += "sw.js"
+				mkSw.workerUrl.searchParams.set("cache", mkSw.config.cache);
+				mkSw.workerUrl.searchParams.set("log", mkSw.config.log);
+				mkSw.config.url = mkSw.workerUrl.href;
+			}
+			if (mkSw.config.aoAtualizarVersao != null) {
+				mkSw.aoAtualizarVersao = mkSw.config.aoAtualizarVersao;
+			}
+			mkSw.config.versao = mkSw._getVersaoAtual();
+		}
 		// Não iniciar quando indisponível
 		if (!("serviceWorker" in navigator)) {
 			mkSw.showError("Sem suporte a Service Worker (Verificar HTTPS)", "")
