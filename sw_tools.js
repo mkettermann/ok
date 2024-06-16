@@ -121,6 +121,7 @@ class mkSw {
 			mkSw.showInfo("Solicitando Update de Versão...");
 			navigator.serviceWorker?.getRegistration().then(reg => {
 				reg.update();
+				mkSw.skipWaiting();
 				r();
 			}).catch(erro => {
 				re(erro);
@@ -192,6 +193,6 @@ class mkSw {
 	};
 
 	static _setVersaoAtual = (versao) => {
-		localStorage.sw_VersaoAtual = versao;
+		localStorage.sw_VersaoAtual = versao.toString();
 	};
 }
