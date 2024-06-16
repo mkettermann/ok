@@ -103,7 +103,7 @@ class mkSw {
 
 	// Out of Worker
 	static showError = (msg, erro, nivel = 2) => {
-		if (mkSw.config.log >= nivel) console.log(`%cO> %cSW_ERRO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
+		console.log(`%cO> %cSW_ERRO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
 	}
 
 	// Out of Worker
