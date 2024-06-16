@@ -25,7 +25,7 @@ class mkSw {
 				let url_path = location.pathname;
 				let liof = url_path.lastIndexOf("/");
 				if (liof >= 0) {
-					url_path = location.pathname.slice(0, liof);
+					url_path = location.pathname.slice(0, liof) + "/";
 				}
 				let fullUrl = location.origin + url_path;
 				mkSw.showInfo("Full Url", fullUrl, 1)
