@@ -6,7 +6,7 @@ const version = "1.84";
 let log = new URL(location.href).searchParams.get("log");
 if (log == null) { log = 0; }
 let p = new URL(location.href).searchParams.get("p");
-if (p == null) { p = 1; } else { p = Number(p); }
+if (p == null) { p = 1; } else { p = Number(p); } // Padrão CacheFirst
 const cacheName = "sw_v_static_" + version; // Assets ao instalar
 const cacheFound = "sw_v_found_" + version; // Assets que irá guardar durante.
 
