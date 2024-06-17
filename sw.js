@@ -2,13 +2,17 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "1.84";
+const version = "1.85";
+
 let log = new URL(location.href).searchParams.get("log");
 if (log == null) { log = 0; }
+let f = new URL(location.href).searchParams.get("f"); // ativa / desativa found (encontrado fora dos assets)
+if (f != "true") { f = false; } else { f = true; };
 let p = new URL(location.href).searchParams.get("p");
 if (p == null) { p = 1; } else { p = Number(p); } // Padrão CacheFirst
 const cacheName = "sw_v_static_" + version; // Assets ao instalar
 const cacheFound = "sw_v_found_" + version; // Assets que irá guardar durante.
+
 
 // Assets que serão salvos quando instalar o sw.
 const swAssets = [
@@ -64,10 +68,13 @@ const sw_cacheUpdate = async (cacheName) => {
 
 // Aqui salva apenas no found
 const sw_cacheSave = (url, inNetwork) => {
-	showInfo("Salvando no Cache...", cacheFound);
-	caches.open(cacheFound).then((cache) => {
-		cache.put(url, inNetwork);
-	})
+	if (f) {
+		showInfo("Salvando no Cache...", cacheFound);
+		caches.open(cacheFound).then((cache) => {
+			cache.put(url, inNetwork);
+		})
+	}
+
 };
 
 const sw_messageToClients = (action, str = "") => {
