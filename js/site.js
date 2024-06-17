@@ -316,7 +316,6 @@ mkt.Ao("click", "#indexRefresh", () => {
 })
 
 mkSw.start({
-	log: 9,
 	aoAtualizarVersao: (vAtual, vAnterior) => {
 		// Como Proceder / Informar usuário quando terminou de instalar nova versão
 		if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Nova versão: ${vAtual} (Estava: ${vAnterior}). Atualize.`;

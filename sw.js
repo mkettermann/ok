@@ -131,7 +131,6 @@ self.addEventListener("activate", ev => {
 })
 
 // POLÍTICAS SW PROXY
-console.log("Politica:", p);
 self.addEventListener("fetch", ev => {
 	let url = new URL(ev.request.url);
 	let checkUrl = url.origin + url.pathname;
