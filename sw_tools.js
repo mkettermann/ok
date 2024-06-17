@@ -30,14 +30,16 @@ class mkSw {
 				let fullUrl = location.origin + url_path;
 				mkSw.showInfo("Full Url", fullUrl, 2)
 				mkSw.workerUrl = new URL(fullUrl);
-				mkSw.workerUrl.pathname += "sw.js"
-				mkSw.workerUrl.searchParams.set("p", mkSw.config.p);
-				mkSw.workerUrl.searchParams.set("log", mkSw.config.log);
-				mkSw.config.url = mkSw.workerUrl.href;
+				mkSw.workerUrl.pathname += "sw.js";
+			} else {
+				mkSw.workerUrl = new URL(mkSw.config.url);
 			}
 			if (mkSw.config.aoAtualizarVersao != null) {
 				mkSw.aoAtualizarVersao = mkSw.config.aoAtualizarVersao;
 			}
+			mkSw.workerUrl.searchParams.set("p", mkSw.config.p);
+			mkSw.workerUrl.searchParams.set("log", mkSw.config.log);
+			mkSw.config.url = mkSw.workerUrl.href;
 			mkSw.config.versao = mkSw._getVersaoAtual();
 		}
 		// Não iniciar quando indisponível
