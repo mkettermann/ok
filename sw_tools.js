@@ -13,8 +13,8 @@ class mkSw {
 	static start = async (config) => {
 		mkSw.config = config;
 		if (typeof mkSw.config == "object") {
-			if (mkSw.config.cache != false) {
-				mkSw.config.cache = true;
+			if (mkSw.config.p == null) {
+				mkSw.config.p = 1;
 			}
 			if (mkSw.config.log != null) {
 				mkSw.config.log = mkSw.config.log;
@@ -28,10 +28,10 @@ class mkSw {
 					url_path = location.pathname.slice(0, liof) + "/";
 				}
 				let fullUrl = location.origin + url_path;
-				mkSw.showInfo("Full Url", fullUrl, 1)
+				mkSw.showInfo("Full Url", fullUrl, 2)
 				mkSw.workerUrl = new URL(fullUrl);
 				mkSw.workerUrl.pathname += "sw.js"
-				mkSw.workerUrl.searchParams.set("cache", mkSw.config.cache);
+				mkSw.workerUrl.searchParams.set("p", mkSw.config.p);
 				mkSw.workerUrl.searchParams.set("log", mkSw.config.log);
 				mkSw.config.url = mkSw.workerUrl.href;
 			}
@@ -60,7 +60,7 @@ class mkSw {
 		navigator.serviceWorker.getRegistration().then(reg => {
 			mkSw.showInfo("Registro bem sucedido", registro.scope, 1)
 			mkSw.showInfo("Log Level", mkSw.config.log);
-			mkSw.showInfo("Cache Ativo", mkSw.config.cache);
+			mkSw.showInfo("Política", mkSw.config.p);
 
 			if (reg) reg.onupdatefound = (ev) => {
 				const instalacao = reg.installing;
