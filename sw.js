@@ -7,7 +7,7 @@ const version = "1.85";
 let log = new URL(location.href).searchParams.get("log");
 if (log == null) { log = 0; }
 let f = new URL(location.href).searchParams.get("f"); // ativa / desativa found (encontrado fora dos assets)
-if (f != "true") { f = false; } else { f = true; };
+if (f != "false") { f = true; } else { f = false; };
 let p = new URL(location.href).searchParams.get("p");
 if (p == null) { p = 1; } else { p = Number(p); } // Padrão CacheFirst
 const cacheName = "sw_v_static_" + version; // Assets ao instalar
