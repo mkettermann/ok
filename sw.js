@@ -151,6 +151,7 @@ self.addEventListener("fetch", ev => {
 				caches.match(checkUrl).then((inCache) => {
 					return inCache || fetch(ev.request).then((inNetwork) => {
 						sw_cacheSave(checkUrl, inNetwork.clone());
+						return inNetwork;
 					});
 				})
 			)
