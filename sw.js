@@ -13,7 +13,6 @@ if (p == null) { p = 1; } else { p = Number(p); } // Padrão CacheFirst
 const cacheName = "sw_v_static_" + version; // Assets ao instalar
 const cacheFound = "sw_v_found_" + version; // Assets que irá guardar durante.
 
-
 // Assets que serão salvos quando instalar o sw.
 const swAssets = [
 	'./',
