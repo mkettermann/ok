@@ -16,6 +16,9 @@ class mkSw {
 			if (mkSw.config.p == null) {
 				mkSw.config.p = 1;
 			}
+			if (mkSw.config.f == null) {
+				mkSw.config.f = "";
+			}
 			if (mkSw.config.log != null) {
 				mkSw.config.log = mkSw.config.log;
 			} else {
@@ -38,6 +41,7 @@ class mkSw {
 				mkSw.aoAtualizarVersao = mkSw.config.aoAtualizarVersao;
 			}
 			mkSw.workerUrl.searchParams.set("p", mkSw.config.p);
+			mkSw.workerUrl.searchParams.set("f", mkSw.config.f);
 			mkSw.workerUrl.searchParams.set("log", mkSw.config.log);
 			mkSw.config.url = mkSw.workerUrl.href;
 			mkSw.config.versao = mkSw._getVersaoAtual();
