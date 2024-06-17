@@ -2,17 +2,19 @@
 //  MK Service Worker               \\
 //__________________________________*/
 
-const version = "1.82";
+const version = "1.84";
 let log = new URL(location.href).searchParams.get("log");
 if (log == null) { log = 0; }
 let p = new URL(location.href).searchParams.get("p");
 if (p == null) { p = 1; } else { p = Number(p); }
-const cacheName = "sw_v_static_" + version; // Versão atual
-const cacheFound = "sw_v_found_" + version; // Versão atual
+const cacheName = "sw_v_static_" + version; // Assets ao instalar
+const cacheFound = "sw_v_found_" + version; // Assets que irá guardar durante.
 
-// Assets do cache Base:
+// Assets que serão salvos quando instalar o sw.
 const swAssets = [
 	'./',
+	'./sw_tools.js',
+	'./manifest.json',
 	'./index.html',
 	'./css/bootstrap-icons/font/bootstrap-icons.css',
 	'./css/bootstrap-icons/font/bootstrap-icons.min.css',
@@ -136,10 +138,6 @@ self.addEventListener("fetch", ev => {
 	if (url.origin == location.origin) {
 		checkUrl = url.pathname; // Apenas Path dos assets
 	}
-	// Verifica Path dos Assets
-	// if (!swAssets.includes(checkUrl)) {
-	// 	ev.respondWith(fetch(ev.request));
-	// } else {
 	switch (p) {
 		case 0:
 			// 0 - Stale-While-Revalidate
@@ -159,7 +157,6 @@ self.addEventListener("fetch", ev => {
 					if (inCache) {
 						return inCache;
 					} else {
-						showInfo(`Fetch`, ev.request.url);
 						return fetch(ev.request).then(inNetwork => {
 							sw_cacheSave(checkUrl, inNetwork.clone());
 							return inNetwork;
@@ -196,6 +193,4 @@ self.addEventListener("fetch", ev => {
 			)
 			break;
 	}
-	// }
-
 })
