@@ -1,5 +1,5 @@
 // Service Worker Versão
-const version = "1.85";
+const version = "1.86";
 
 // Assets que serão salvos quando instalar o sw.
 const swAssets = [
