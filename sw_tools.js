@@ -109,7 +109,7 @@ class mkSw {
 	}
 
 	// Out of Worker
-	static showError = (msg, erro, nivel = 2) => {
+	static showError = (msg, erro) => {
 		console.error(`%cO> %cSW_ERRO: %c${msg}%c ->`, "color:MediumOrchid;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
 	}
 
@@ -154,7 +154,7 @@ class mkSw {
 	static sendMessageToSW = (message) => {
 		mkSw.showInfo(">> COMUNICAÇÃO", message);
 		if (navigator.serviceWorker.controller) {
-			navigator.serviceWorker.controller.postMessage(message)
+			navigator.serviceWorker.controller.postMessage(message);
 			return true;
 		} else {
 			mkSw.showError("Sem controller para enviar mensagem.", navigator.serviceWorker.controller);
@@ -167,7 +167,7 @@ class mkSw {
 		let c = 0;
 		await mkSw.getUpdate().catch(ree => { re(ree) });
 		if (!mkSw.sendMessageToSW({ action: "UpdateFull" })) {
-			re("Erro de Comunicação");
+			return "Erro de Comunicação";
 		};
 		return new Promise((r, re) => {
 			let esperandoRespostaUpdate = () => {
@@ -191,7 +191,8 @@ class mkSw {
 
 	// Update All Clients via Message
 	static skipWaiting = async () => {
-		(await navigator.serviceWorker?.getRegistration()).waiting.postMessage({ action: "skipWaiting" })
+		// Try Skip SE houver registro e SE houver algum waiting.
+		(await navigator.serviceWorker?.getRegistration()).waiting?.postMessage({ action: "skipWaiting" });
 	}
 
 	static _getVersaoAtual = () => {
