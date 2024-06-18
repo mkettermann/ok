@@ -1,17 +1,5 @@
-/**********************************\\
-//  MK Service Worker               \\
-//__________________________________*/
-
+// Service Worker Versão
 const version = "1.85";
-
-let log = new URL(location.href).searchParams.get("log");
-if (log == null) { log = 0; }
-let f = new URL(location.href).searchParams.get("f"); // ativa / desativa found (encontrado fora dos assets)
-if (f != "false") { f = true; } else { f = false; };
-let p = new URL(location.href).searchParams.get("p");
-if (p == null) { p = 1; } else { p = Number(p); } // Padrão CacheFirst
-const cacheName = "sw_v_static_" + version; // Assets ao instalar
-const cacheFound = "sw_v_found_" + version; // Assets que irá guardar durante.
 
 // Assets que serão salvos quando instalar o sw.
 const swAssets = [
@@ -43,18 +31,33 @@ const swAssets = [
 	'./js/site.js',
 ];
 
+/**********************************\\
+//  MK SERVICE WORKER               \\
+//__________________________________*/
+
+let log = new URL(location.href).searchParams.get("log");
+if (log == null) { log = 0; }
+let f = new URL(location.href).searchParams.get("f"); // ativa / desativa found (encontrado fora dos assets)
+if (f != "false") { f = true; } else { f = false; };
+let p = new URL(location.href).searchParams.get("p");
+if (p == null) { p = 1; } else { p = Number(p); } // Padrão CacheFirst
+const cacheName = "sw_v_static_" + version; // Assets ao instalar
+const cacheFound = "sw_v_found_" + version; // Assets que irá guardar durante.
+
 // Inside of Worker
 const showError = (msg, erro) => {
-	if (log >= 3) console.log(`%cI> %cSW_ERRO: %c${msg}%c ->`, "color:lawngreen;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
+	console.log(`%cI> %cSW_ERRO: %c${msg}%c ->`, "color:lawngreen;", "color:MediumSpringGreen;", "background:#0009;color:red;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", erro);
 }
 
 // Inside of Worker
-const showInfo = (msg, data) => {
-	if (log >= 3) console.log(`%cI> %cSW_INFO: %c${msg}%c ->`, "color:lawngreen;", "color:MediumSpringGreen;", "background:#0005;color:green;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", data);
+const showInfo = (msg, data, nivel = 2) => {
+	if (log >= nivel) {
+		console.log(`%cI> %cSW_INFO: %c${msg}%c ->`, "color:lawngreen;", "color:MediumSpringGreen;", "background:#0005;color:green;border-radius:3px;padding:0px 3px;", "color:MediumOrchid;", data);
+	}
 }
 
 const sw_cacheUpdate = async (cacheName) => {
-	showInfo("Atualizando Cache...", cacheName);
+	showInfo("Atualizando Cache...", cacheName, 2);
 	caches.open(cacheName).then((cache) => {
 		const stack = [];
 		// ADD ==> Coleta as rotas e guarda.
@@ -67,11 +70,18 @@ const sw_cacheUpdate = async (cacheName) => {
 
 // Aqui salva apenas no found
 const sw_cacheSave = (url, inNetwork) => {
-	if (f) {
-		showInfo("Salvando no Cache...", cacheFound);
-		caches.open(cacheFound).then((cache) => {
+	if (swAssets.includes(url)) {
+		// Se for salvar um item do asset, já salva atualiza no static.
+		caches.open(cacheName).then((cache) => {
 			cache.put(url, inNetwork);
 		})
+	} else {
+		if (f) {
+			caches.open(cacheFound).then((cache) => {
+				showInfo(`+++ ${cacheFound}...`, url, 3);
+				cache.put(url, inNetwork);
+			})
+		}
 	}
 
 };
@@ -175,8 +185,12 @@ self.addEventListener("fetch", ev => {
 		case 2:
 			// 2 - Network first, then Cache
 			ev.respondWith(
-				fetch(ev.request).catch(() => { // Só retorna cache se deu erro no fetch
-					return caches.match(checkUrl);
+				fetch(ev.request).then(inNetwork => {
+					sw_cacheSave(checkUrl, inNetwork.clone());
+					return inNetwork;
+				}).catch(async () => { // Só retorna cache se deu erro no fetch
+					const inCache = await caches.match(checkUrl);
+					if (inCache) return inCache;
 				})
 			);
 			break;
