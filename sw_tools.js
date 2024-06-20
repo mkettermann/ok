@@ -59,15 +59,9 @@ class mksw {
 		await navigator.serviceWorker.register(mksw.workerUrl.href).catch((err) => mksw.showError("Register", err));
 		const registro = await navigator.serviceWorker.ready;
 
-		// Finaliza Start se não houver Registro
-		// if (registro == null) {
-		// 	mksw.showError("Falhou em obter a versão atual", registro);
-		// 	return null;
-		// }
-
 		if (registro.waiting && registro.active) {
 			mksw.showInfo("Opa! Nova versão encontrada", registro.waiting, registro.active);
-			window.swNeedUpdate = true;
+			window.swWaitingForUpdate = true;
 		}
 
 		// GATILHO de UPDATE (Só se executa se o SW for modificado)
@@ -76,7 +70,7 @@ class mksw {
 			if (swInstalando) swInstalando.onstatechange = async () => {
 				if (swInstalando.state === 'installed' && navigator.serviceWorker.controller) {
 					mksw.showInfo("SW sob controle:", swInstalando.state);
-					window.swNeedUpdate = true;
+					window.swWaitingForUpdate = true;
 					await mksw.prepareCachesForUpdate();
 					await mksw.skipWaiting();
 				}
@@ -85,9 +79,9 @@ class mksw {
 
 		// GATILHO de SAIDA
 		window.addEventListener('beforeunload', async () => {
-			if (window.swNeedUpdate) {
+			if (window.swWaitingForUpdate) {
 				mksw.showInfo("Antes de Sair. Skip Updates");
-				window.swNeedUpdate = false;
+				window.swWaitingForUpdate = false;
 				await mksw.skipWaiting();
 			}
 		});
@@ -96,11 +90,13 @@ class mksw {
 		navigator.serviceWorker.addEventListener("message", ev => {
 			mksw.showInfo("<< COMUNICAÇÃO", ev.data);
 			switch (ev.data.type) {
-				case "UpdateFull":
+
+				case "UPDATED_CACHE":
 					mksw.showInfo("Update Concluído", ev.data.ver);
 					mksw.updateConcluido = ev.data.ver;
 					break;
-				case "Versão":
+
+				case "VERSION":
 					if (ev.data.ver != mksw._getVersaoAtual()) {
 						let listaVersoes = [mksw._getVersaoAtual(), ev.data.ver];
 						mksw.showInfo(`Versão MUDOU:`, listaVersoes);
@@ -108,6 +104,7 @@ class mksw {
 						mksw.aoAtualizarVersao(listaVersoes[1], listaVersoes[0]);
 					}
 					break;
+
 				case "sync":
 					mksw.showInfo("Sincronizado", ev.data.ver);
 					break;
@@ -136,12 +133,16 @@ class mksw {
 
 	// Skip Waiting
 	static skipWaiting = async () => {
-		return (await mksw.getWaitingWorker())?.postMessage({ type: 'SKIP_WAITING' });
+		let obj = { type: 'SKIP_WAITING' }
+		mksw.showInfo(">> COMUNICAÇÃO (ToWaiting)", obj);
+		return (await mksw.getWaitingWorker())?.postMessage(obj);
 	}
 
 	// Solicita Refazer Cache.
 	static prepareCachesForUpdate = async () => {
-		return (await mksw.getWaitingWorker())?.postMessage({ type: 'PREPARE_CACHES_FOR_UPDATE' });
+		let obj = { type: 'PREPARE_CACHES_FOR_UPDATE' }
+		mksw.showInfo(">> COMUNICAÇÃO (ToWaiting)", obj);
+		return (await mksw.getWaitingWorker())?.postMessage(obj);
 	}
 
 	static aoAtualizarVersao = (versao) => {
@@ -150,21 +151,21 @@ class mksw {
 
 	// Atualizar no SW.
 	static getUpdate = () => {
-		return new Promise((r, re) => {
-			mksw.showInfo("Solicitando Update de Versão...");
+		return new Promise((r, reject) => {
+			mksw.showInfo("Solicitando Update de Versão...", mksw._getVersaoAtual());
 			navigator.serviceWorker?.getRegistration().then(reg => {
 				reg.update();
 				mksw.skipWaiting();
 				r();
 			}).catch(erro => {
-				re(erro);
+				reject(erro);
 			});
 		})
 	}
 	// Solicita Versao.
 	static getVersao = () => {
-		if (!mksw.sendMessageToSW({ action: "Versão" })) {
-			re("Falha de comunicação");
+		if (!mksw.sendMessageToSW({ type: "VERSION" })) {
+			mksw.showError("Falha de comunicação");
 		}
 	}
 	// Desregistrar no SW.
@@ -191,18 +192,18 @@ class mksw {
 	static requestUpdate = async () => {
 		mksw.updateConcluido = null;
 		let c = 0;
-		await mksw.getUpdate().catch(ree => { re(ree) });
-		if (!mksw.sendMessageToSW({ action: "UpdateFull" })) {
+		await mksw.getUpdate().catch(ree => { mksw.showError(ree) });
+		if (!mksw.sendMessageToSW({ type: "PREPARE_CACHES_FOR_UPDATE" })) {
 			return "Erro de Comunicação";
 		};
 		return new Promise((r, re) => {
 			let esperandoRespostaUpdate = () => {
-				mksw.showInfo("Registro bem sucedido", c, 4)
+				mksw.showInfo("Em espera de resposta do Update. Checagem: ", c, 4)
 				if (mksw.updateConcluido != null) {
 					r(mksw.updateConcluido);
 				} else {
-					if (c > 1000) {
-						re("Timeout");
+					if (c > 100) {
+						mksw.showError("Timeout");
 					} else {
 						setTimeout(() => {
 							c++;
