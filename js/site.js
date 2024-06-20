@@ -303,10 +303,10 @@ const uiClearFiltro = async (listId) => {
 //  PWA UI								          \\
 //__________________________________*/
 mkt.Ao("click", "#returnOnSync", () => {
-	mkSw.returnTagOnSync("SincronizarAgora");
+	mksw.returnTagOnSync("SincronizarAgora");
 })
 mkt.Ao("click", "#indexReqUpdate", () => {
-	mkSw.requestUpdate().then(r => {
+	mksw.requestUpdate().then(r => {
 		mkt.Q("#swOutputInfo").innerHTML = `Atualizado. v${r}`;
 		mkt.Q("#pwaversao").innerHTML = r;
 	});
@@ -315,8 +315,9 @@ mkt.Ao("click", "#indexRefresh", () => {
 	window.location.reload();
 })
 
-mkSw.start({
-	log: 1,
+mksw.start({
+	log: 9,
+	p: 1,
 	aoAtualizarVersao: (vAtual, vAnterior) => {
 		// Como Proceder / Informar usuário quando terminou de instalar nova versão
 		if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Nova versão: ${vAtual} (Estava: ${vAnterior}). Atualize.`;
