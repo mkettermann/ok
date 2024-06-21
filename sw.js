@@ -1,10 +1,9 @@
 // Service Worker Versão
-const version = "1.104";
+const version = "1.105";
 
 // Assets que serão salvos quando instalar o sw.
 const swAssets = [
 	'./',
-	'./sw_tools.js',
 	'./manifest.json',
 	'./index.html',
 	'./css/bootstrap-icons/font/bootstrap-icons.css',
@@ -27,6 +26,7 @@ const swAssets = [
 	'./img/icons/ok_512.png',
 	'./img/icons/ok_mask_196.png',
 	'./js/mkt.js',
+	'./js/mksw.js',
 	'./js/popperv2.js',
 	'./js/site.js',
 ];
