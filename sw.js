@@ -1,5 +1,5 @@
 // Service Worker Versão
-const version = "1.105";
+const version = "1.118";
 
 // Assets que serão salvos quando instalar o sw.
 const swAssets = [
@@ -92,6 +92,11 @@ const getClients = async () => await self.clients.matchAll({ includeUncontrolled
 const hasActiveClients = async () => {
 	const clients = await getClients();
 	return clients.some(({ visibilityState }) => visibilityState === 'visible');
+};
+
+const getActiveClients = async () => {
+	const clients = await getClients();
+	return clients.filter(({ visibilityState }) => visibilityState === 'visible');
 };
 
 const sw_messageToClients = async (msg, str = "") => {
@@ -268,9 +273,28 @@ const getCacheStorageNames = async () => {
 
 // NOTIFICATION
 // Close
-self.addEventListener('notificationclick', async (ev) => {
+const closeNotify = async (ev, msg = "Notif. Fechada") => {
+	showInfo(msg, ev);
 	ev.notification.close();
+}
+
+// Clique na notificação
+self.addEventListener('notificationclick', async (ev) => {
+	if (ev.action !== "close") {
+		(await getActiveClients()).forEach(ativo => {
+			if (ativo.type == "window") {
+				showInfo(`Redirecionando...`, ativo);
+				//ativo.navigate(ev.notification.data.loc);
+			}
+		})
+	}
+	closeNotify(ev, "Notif. Clicada");
 })
+
+// Ao fechar, em massa e com delay.
+self.addEventListener('notificationclose', async (ev) => {
+	closeNotify(ev);
+});
 
 // Push
 self.addEventListener('push', async (ev) => {
