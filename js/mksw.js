@@ -16,8 +16,8 @@ class mksw {
 	static start = async (config) => {
 		mksw.config = config;
 		if (typeof mksw.config == "object") {
-			if (mksw.config.p == null) {
-				mksw.config.p = 1;
+			if (mksw.config.cache == null) {
+				mksw.config.cache = 1;
 			}
 			if (mksw.config.f == null) {
 				mksw.config.f = "";
@@ -34,7 +34,7 @@ class mksw {
 					url_path = location.pathname.slice(0, liof) + "/";
 				}
 				let fullUrl = location.origin + url_path;
-				mksw.showInfo("Full Url", fullUrl, 2)
+				mksw.showInfo("Full Url", fullUrl, 2);
 				mksw.workerUrl = new URL(fullUrl);
 				mksw.workerUrl.pathname += "sw.js";
 			} else {
@@ -43,7 +43,7 @@ class mksw {
 			if (mksw.config.aoAtualizarVersao != null) {
 				mksw.aoAtualizarVersao = mksw.config.aoAtualizarVersao;
 			}
-			mksw.workerUrl.searchParams.set("p", mksw.config.p);
+			mksw.workerUrl.searchParams.set("p", mksw.config.cache);
 			mksw.workerUrl.searchParams.set("f", mksw.config.f);
 			mksw.workerUrl.searchParams.set("log", mksw.config.log);
 			mksw.config.url = mksw.workerUrl.href;
@@ -110,6 +110,35 @@ class mksw {
 					break;
 			}
 		})
+
+		// Request Notification
+		if (!("Notification" in window)) {
+			mksw.showError("Sem suporte a Notificações", "");
+		} else {
+			Notification.requestPermission((status) => {
+				// default / granted / denied
+				// mksw.showInfo("Notif. Status ", status);
+			});
+			// mksw.notify("Welcome", {
+			// 	body: "Bem Vindo.",
+			// 	icon: "img/icons/ok_72.png",
+			// 	vibrate: [100, 30, 100, 30, 100],
+			// 	data: {
+			// 		datRecebeu: Math.floor(Date.now()),
+			// 		loc: mksw.config.urlOrigem + "#FromClickEvent",
+			// 	},
+			// 	actions: [
+			// 		{
+			// 			action: "confirm",
+			// 			title: "OK",
+			// 		}
+			// 	],
+			// 	requireInteraction: true,
+			// 	onclose: (ev) => {
+			// 		mksw.showInfo("ONCLOSE", ev);
+			// 	}
+			// });
+		}
 
 		return mksw.config;
 	}
@@ -179,8 +208,8 @@ class mksw {
 	}
 	// Message To SW. Via Controller
 	static sendMessageToSW = (message) => {
-		mksw.showInfo(">> COMUNICAÇÃO", message);
 		if (navigator.serviceWorker.controller) {
+			mksw.showInfo(">> COMUNICAÇÃO", message);
 			navigator.serviceWorker.controller.postMessage(message);
 			return true;
 		} else {
@@ -229,9 +258,18 @@ class mksw {
 	static _isInstalled = async () => {
 		const hasInstalledRelatedApps = (('getInstalledRelatedApps' in navigator) && (await navigator.getInstalledRelatedApps()).length > 0);
 		const standalone = matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: tabbed)').matches;
-		console.log(hasInstalledRelatedApps, standalone);
+		mksw.showInfo("Instado Related / Standalone", [hasInstalledRelatedApps, standalone]);
 		return hasInstalledRelatedApps || standalone;
 	}
+
+	static notify = async (titulo, opcoes) => {
+		if (Notification.permission === "granted") {
+			navigator.serviceWorker.ready.then(r => {
+				r.showNotification(titulo, opcoes);
+			});
+		}
+	}
+
 }
 
 (async () => {
