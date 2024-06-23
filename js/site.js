@@ -316,8 +316,9 @@ mkt.Ao("click", "#indexRefresh", () => {
 })
 
 mksw.start({
-	log: 9,
-	p: 1,
+	log: 2,
+	cache: 2,
+	urlOrigem: window.location.origin + window.location.pathname,
 	aoAtualizarVersao: (vAtual, vAnterior) => {
 		// Como Proceder / Informar usuário quando terminou de instalar nova versão
 		if (mkt.Q("#swOutputInfo")) mkt.Q("#swOutputInfo").innerHTML = `Nova versão: ${vAtual} (Estava: ${vAnterior}). Atualize.`;
