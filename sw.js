@@ -1,5 +1,5 @@
 // Service Worker Versão
-const version = "1.118";
+const version = "1.124";
 
 // Assets que serão salvos quando instalar o sw.
 const swAssets = [
@@ -30,6 +30,9 @@ const swAssets = [
 	'./js/popperv2.js',
 	'./js/site.js',
 ];
+
+const icon = "img/icons/ok_72.png";
+const vibrate = [100, 30, 100, 30, 100];
 
 /**********************************\\
 //  MK SERVICE WORKER               \\
@@ -242,6 +245,84 @@ self.addEventListener("fetch", ev => {
 
 // OUTRAS MECANICAS
 
+// NOTIFICATION
+// Close
+const closeNotify = async (ev, msg = "Notif. Fechada") => {
+	showInfo(msg, ev);
+	ev.notification.close();
+}
+// Clique na notificação
+self.addEventListener('notificationclick', async (ev) => {
+	if (ev.action !== "close") {
+		let promessa = async () => {
+			return new Promise((re) => {
+				setTimeout(re, 50);
+			}).then(() => {
+				showInfo(`Abrindo APP`, ev.notification.data.loc);
+				return self.clients.openWindow(ev.notification.data.loc);
+			});
+		}
+		ev.waitUntil((async () => {
+			let ativos = await getActiveClients();
+			showInfo(`Ativos`, ativos);
+			ativos.forEach(ativo => {
+				if (ativo.type == "window") {
+					// Aqui é possivel redirecionar pra tela de notificações por exemplo
+					showInfo(`Redirecionando...`, ativo);
+					ativo.navigate(ev.notification.data.loc);
+				}
+			})
+			if (ativos.length <= 0) {
+				await promessa();
+			}
+		})()
+		);
+	}
+	closeNotify(ev, "Notif. Clicada");
+})
+
+// Ao fechar, em massa e com delay.
+self.addEventListener('notificationclose', async (ev) => {
+	closeNotify(ev);
+});
+
+// Push (Server > SW > Client)
+self.addEventListener('push', async (ev) => {
+	const data = ev.data.json();
+	showInfo(`Push de Notificação do Servidor.`, data);
+	const { title, message, interaction } = data;
+	const options = {
+		body: message,
+		icon: icon,
+		vibrate: vibrate,
+		data: {
+			dateOfArrival: Date.now()
+		},
+		actions: [{
+			action: 'confirm',
+			title: 'OK'
+		}, {
+			action: 'close',
+			title: 'Fechar'
+		},],
+		requireInteraction: interaction
+	};
+
+	ev.waitUntil(
+		self.registration.showNotification(title, options)
+			.then(hasActiveClients)
+			.then((activeClients) => {
+				if (!activeClients) {
+					self.numBadges += 1;
+					navigator.setAppBadge(self.numBadges);
+				}
+			})
+			.catch(err => sw_messageToClients(err))
+	)
+});
+
+
+// STORAGE PWA
 const IDBConfig = {
 	name: 'pwa-db',
 	version,
@@ -271,69 +352,6 @@ const getCacheStorageNames = async () => {
 	return { latestCacheName, outdatedCacheNames };
 };
 
-// NOTIFICATION
-// Close
-const closeNotify = async (ev, msg = "Notif. Fechada") => {
-	showInfo(msg, ev);
-	ev.notification.close();
-}
-
-// Clique na notificação
-self.addEventListener('notificationclick', async (ev) => {
-	if (ev.action !== "close") {
-		(await getActiveClients()).forEach(ativo => {
-			if (ativo.type == "window") {
-				showInfo(`Redirecionando...`, ativo);
-				//ativo.navigate(ev.notification.data.loc);
-			}
-		})
-	}
-	closeNotify(ev, "Notif. Clicada");
-})
-
-// Ao fechar, em massa e com delay.
-self.addEventListener('notificationclose', async (ev) => {
-	closeNotify(ev);
-});
-
-// Push
-self.addEventListener('push', async (ev) => {
-	const data = ev.data.json();
-	const { title, message, interaction } = data;
-
-	const options = {
-		body: message,
-		icon: '/src/img/icons/icon-512x512.png',
-		vibrate: [100, 30, 100, 30, 100],
-		data: {
-			dateOfArrival: Date.now()
-		},
-		actions: [
-			{
-				action: 'confirm',
-				title: 'OK'
-			},
-			{
-				action: 'close',
-				title: 'Close notification'
-			},
-		],
-		requireInteraction: interaction
-	};
-
-	ev.waitUntil(
-		self.registration.showNotification(title, options)
-			.then(hasActiveClients)
-			.then((activeClients) => {
-				if (!activeClients) {
-					self.numBadges += 1;
-					navigator.setAppBadge(self.numBadges);
-				}
-			})
-			.catch(err => sw_messageToClients(err))
-	)
-});
-
 // Online
 self.addEventListener('sync', async ev => {
 	const title = 'Background Sync demo';
@@ -341,8 +359,8 @@ self.addEventListener('sync', async ev => {
 	if (ev.tag.startsWith('sync-demo')) {
 		const options = {
 			body: message,
-			icon: '/src/img/icons/icon-512x512.png',
-			vibrate: [100, 30, 100, 30, 100],
+			icon: icon,
+			vibrate: vibrate,
 			data: {
 				dateOfArrival: Date.now()
 			},
