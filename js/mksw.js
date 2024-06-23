@@ -111,13 +111,15 @@ class mksw {
 			}
 		})
 
+		// Request Subscribe Nofication from server.
+		mksw.subcribeNotifications(registro);
+
 		// Request Notification
 		if (!("Notification" in window)) {
 			mksw.showError("Sem suporte a Notificações", "");
 		} else {
 			Notification.requestPermission((status) => {
-				// default / granted / denied
-				// mksw.showInfo("Notif. Status ", status);
+				mksw.showInfo("Notif. Status ", status);
 			});
 			// mksw.notify("Welcome", {
 			// 	body: "Bem Vindo.",
@@ -270,6 +272,11 @@ class mksw {
 		}
 	}
 
+	static subcribeNotifications = async (registro) => {
+		let sub = await registro.pushManager.subscribe({ userVisibleOnly: true });
+		mksw.showInfo("Subs: ", sub);
+		mksw.showInfo("Endpoint: ", sub.endpoint);
+	}
 }
 
 (async () => {
