@@ -112,7 +112,8 @@ class mksw {
 		})
 
 		// Request Subscribe Nofication from server.
-		mksw.subcribeNotifications(registro);
+		// Desativado até atualizar o codigo depreciado
+		//mksw.subcribeNotifications(registro);
 
 		// Request Notification
 		if (!("Notification" in window)) {
